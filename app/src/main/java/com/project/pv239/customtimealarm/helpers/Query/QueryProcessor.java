@@ -4,6 +4,8 @@ import com.project.pv239.customtimealarm.api.GoogleMapsAPIKeyGetter;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.helpers.Places.PlacesProvider;
+import com.project.pv239.customtimealarm.helpers.Time.TimeHelper;
+import com.project.pv239.customtimealarm.helpers.Transport.TransportDetailProvider;
 
 public class QueryProcessor {
     private String queryTemplate = "https://maps.googleapis.com/maps/api/directions/json?origin={ORIGIN}&destination={DESTINATION}&mode={MODE}&alternatives=false&arrival_time={TIME_OF_ARRIVAL}&traffic_model={MODEL}&key={API_KEY}";
@@ -19,37 +21,37 @@ public class QueryProcessor {
     }
 
     private String replacePlaceHoldersInQuery() {
-        putApiKeyIntoQuery(GoogleMapsAPIKeyGetter.getApiKey());
-        putArrivalTimeIntoQuery("123345");
-        putDestinationIntoQuery(PlacesProvider.getDestination());
-        putOriginIntoQuery(PlacesProvider.getOrigin());
-        putTrafficModelIntoQuery(TrafficModel.BEST_GUESS);
-        putTravelModeIntoQuery(TravelMode.DRIVING);
-        return queryTemplate;
+        String query = queryTemplate;
+        query = putApiKeyIntoQuery(query, GoogleMapsAPIKeyGetter.getApiKey());
+        query = putArrivalTimeIntoQuery(query, TimeHelper.getTimeOfNextArrivalInSecondsAsString());
+        query = putDestinationIntoQuery(query, PlacesProvider.getDestination());
+        query = putOriginIntoQuery(query, PlacesProvider.getOrigin());
+        query = putTrafficModelIntoQuery(query, TransportDetailProvider.getTrafficModel());
+        query = putTravelModeIntoQuery(query, TransportDetailProvider.getTravelMode());
+        return query;
     }
 
-    private void putOriginIntoQuery(String origin) {
-        queryTemplate = queryTemplate.replace(originHolder, origin);
+    private String putOriginIntoQuery(String query, String origin) {
+        return query.replace(originHolder, origin);
     }
 
-    private void putDestinationIntoQuery(String destination) {
-        queryTemplate = queryTemplate.replace(destinationHolder, destination);
+    private String putDestinationIntoQuery(String query, String destination) {
+        return query.replace(destinationHolder, destination);
     }
 
-    private void putApiKeyIntoQuery(String apiKey) {
-        queryTemplate = queryTemplate.replace(apiKeyHolder, apiKey);
+    private String putApiKeyIntoQuery(String query, String apiKey) {
+        return query.replace(apiKeyHolder, apiKey);
     }
 
-    private void putTravelModeIntoQuery(TravelMode travelMode) {
-        queryTemplate = queryTemplate.replace(travelModeHolder, travelMode.toString());
+    private String putTravelModeIntoQuery(String query, TravelMode travelMode) {
+        return query.replace(travelModeHolder, travelMode.toString());
     }
 
-    //TODO: assure time is passed as string in SECONDS SINCE MIDNIGHT JANUARY 1 1970 UTC
-    private void putArrivalTimeIntoQuery(String arrivalTime) {
-        queryTemplate = queryTemplate.replace(arrivalTimeHolder, arrivalTime);
+    private String putArrivalTimeIntoQuery(String query, String arrivalTime) {
+        return query.replace(arrivalTimeHolder, arrivalTime);
     }
 
-    private void putTrafficModelIntoQuery(TrafficModel trafficModel) {
-        queryTemplate = queryTemplate.replace(trafficModelHolder, trafficModel.toString());
+    private String putTrafficModelIntoQuery(String query, TrafficModel trafficModel) {
+        return query.replace(trafficModelHolder, trafficModel.toString());
     }
 }
