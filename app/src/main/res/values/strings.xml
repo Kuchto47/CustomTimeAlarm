@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Time Alarm</string>
-    <string name="menu_title">Settings</string>
+    <string name="settings">Settings</string>
+    <string name="destination">Destination: </string>
+    <string name="time_of_arrival">Time of arrival: </string>
+    <string name="notification_bed_time">Notification for bed time</string>
+    <string name="notification_GTFO">Notification for departure</string>
+    <string name="bedtime">Bedtime</string>
+    <string name="time_to_sleep">Time to sleep</string>
+    <string name="snooze_time">Snooze time</string>
+    <string name="morning_time">Time for morning routine</string>
+    <string name="transport_type">Type of transport</string>
 </resources>
