@@ -1,6 +1,6 @@
 package com.project.pv239.customtimealarm.helpers.Query;
 
-import com.project.pv239.customtimealarm.api.GoogleMapsAPIKeyGetter;
+import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.helpers.Places.PlacesProvider;
@@ -22,7 +22,7 @@ public class QueryProcessor {
 
     private String replacePlaceHoldersInQuery() {
         String query = queryTemplate;
-        query = putApiKeyIntoQuery(query, GoogleMapsAPIKeyGetter.getApiKey());
+        query = putApiKeyIntoQuery(query, GoogleMapsApiKeyGetter.getApiKey());
         query = putArrivalTimeIntoQuery(query, TimeHelper.getTimeOfNextArrivalInSecondsAsString());
         query = putDestinationIntoQuery(query, PlacesProvider.getDestination());
         query = putOriginIntoQuery(query, PlacesProvider.getOrigin());
