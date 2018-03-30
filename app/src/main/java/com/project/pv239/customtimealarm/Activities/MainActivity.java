@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //TODO consider this to remove in some class that is extending Application/ask tutor how to manage this
         context = getApplicationContext();
         //TODO this is test debug log, can be deleted :)
         Log.d("API KEY HERE", GoogleMapsApiKeyGetter.getApiKey());
