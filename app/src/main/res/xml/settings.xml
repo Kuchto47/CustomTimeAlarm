@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:title="@string/app_name">
@@ -7,14 +8,21 @@
         <SwitchPreference
             android:key="bedtime"
             android:title="@string/bedtime" />
-        <Preference
-            android:key="bedtime_time"
-            android:title="@string/time_to_sleep" />
 
+        <ListPreference
+            android:title="@string/time_to_sleep"
+            android:key="sleep_time"
+            android:entries="@array/sleep_vals"
+            android:entryValues="@array/sleep_vals"
+            />
         <SwitchPreference
             android:title="@string/notification_GTFO"
             android:key="GTFO"/>
         <ListPreference
-            android:title="@string/snooze_time"/>
+            android:title="@string/snooze_time"
+            android:key="snooze"
+            android:entries="@array/snooze_vals"
+            android:entryValues="@array/snooze_vals"
+        />
     </PreferenceCategory>
 </PreferenceScreen>
