@@ -1,10 +1,10 @@
-package com.project.pv239.customtimealarm.Activities;
+package com.project.pv239.customtimealarm.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.project.pv239.customtimealarm.Fragments.SettingsFragment;
+import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 
 public class SettingsActivity extends AppCompatActivity {
     @Override

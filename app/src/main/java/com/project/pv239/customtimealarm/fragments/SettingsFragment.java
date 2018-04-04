@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.Fragments;
+package com.project.pv239.customtimealarm.fragments;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
