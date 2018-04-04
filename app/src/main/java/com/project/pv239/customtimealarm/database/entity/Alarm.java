@@ -10,9 +10,12 @@ import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.helpers.Converters.TrafficModelConverter;
 import com.project.pv239.customtimealarm.helpers.Converters.TravelModeConverter;
 
+import java.util.Objects;
+
 @Entity
 public class Alarm {
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int id;
 
     @ColumnInfo(name = "destination")
@@ -74,5 +77,21 @@ public class Alarm {
 
     public void setTravelMode(TravelMode travelMode) {
         this.travelMode = travelMode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof Alarm)) return false;
+        Alarm alarm = (Alarm) o;
+        return Objects.equals(getDestination(), alarm.getDestination()) &&
+                Objects.equals(getTimeOfArrival(), alarm.getTimeOfArrival()) &&
+                getTrafficModel() == alarm.getTrafficModel() &&
+                getTravelMode() == alarm.getTravelMode();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(), getTravelMode());
     }
 }
