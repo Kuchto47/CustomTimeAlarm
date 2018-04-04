@@ -10,6 +10,11 @@ import android.view.MenuItem;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
+import com.project.pv239.customtimealarm.database.AppDatabase;
+import com.project.pv239.customtimealarm.database.DatabaseProvider;
+import com.project.pv239.customtimealarm.database.Entity.Alarm;
+import com.project.pv239.customtimealarm.enums.TrafficModel;
+import com.project.pv239.customtimealarm.enums.TravelMode;
 
 public class MainActivity extends AppCompatActivity {
     public static Context context;
@@ -19,8 +24,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //TODO consider this to remove in some class that is extending Application/ask tutor how to manage this
         context = getApplicationContext();
-        //TODO this is test debug log, can be deleted :)
-        Log.d("API KEY HERE", GoogleMapsApiKeyGetter.getApiKey());
+        //TODO testing DB
+        AppDatabase db = DatabaseProvider.getDatabase();
+        db.alarmDao().addAlarm(new Alarm("dest", "09:00", TrafficModel.BEST_GUESS, TravelMode.DRIVING));
+        Log.d("========ALARM:", db.alarmDao().getAll().toString());
+        db.close();
+        //
         setContentView(R.layout.activity_main);
     }
     @Override
