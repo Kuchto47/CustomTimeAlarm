@@ -7,22 +7,26 @@
 
         <SwitchPreference
             android:key="bedtime"
-            android:title="@string/bedtime" />
+            android:title="@string/bedtime"
+            android:defaultValue="false"/>
 
         <ListPreference
             android:title="@string/time_to_sleep"
             android:key="sleep_time"
             android:entries="@array/sleep_vals"
             android:entryValues="@array/sleep_vals"
+            android:defaultValue="8"
             />
         <SwitchPreference
             android:title="@string/notification_GTFO"
-            android:key="GTFO"/>
+            android:key="GTFO"
+            android:defaultValue="false"/>
         <ListPreference
             android:title="@string/snooze_time"
             android:key="snooze"
             android:entries="@array/snooze_vals"
             android:entryValues="@array/snooze_vals"
+            android:defaultValue="5"
         />
     </PreferenceCategory>
 </PreferenceScreen>
