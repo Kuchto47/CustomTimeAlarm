@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.database.Entity;
+package com.project.pv239.customtimealarm.database.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
