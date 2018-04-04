@@ -19,11 +19,13 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
         setContentView(R.layout.activity_main);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.settings)
