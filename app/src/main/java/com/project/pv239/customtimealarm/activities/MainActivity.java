@@ -1,20 +1,13 @@
-package com.project.pv239.customtimealarm.Activities;
+package com.project.pv239.customtimealarm.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
-import com.project.pv239.customtimealarm.database.AppDatabase;
-import com.project.pv239.customtimealarm.database.DatabaseProvider;
-import com.project.pv239.customtimealarm.database.Entity.Alarm;
-import com.project.pv239.customtimealarm.enums.TrafficModel;
-import com.project.pv239.customtimealarm.enums.TravelMode;
 
 public class MainActivity extends AppCompatActivity {
     public static Context context;
@@ -24,12 +17,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //TODO consider this to remove in some class that is extending Application/ask tutor how to manage this
         context = getApplicationContext();
-        //TODO testing DB
-        AppDatabase db = DatabaseProvider.getDatabase();
-        db.alarmDao().addAlarm(new Alarm("dest", "09:00", TrafficModel.BEST_GUESS, TravelMode.DRIVING));
-        Log.d("========ALARM:", db.alarmDao().getAll().toString());
-        db.close();
-        //
         setContentView(R.layout.activity_main);
     }
     @Override
