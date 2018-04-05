@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.helpers.Transport;
+package com.project.pv239.customtimealarm.helpers.transport;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;

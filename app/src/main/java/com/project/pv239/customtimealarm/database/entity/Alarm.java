@@ -7,8 +7,8 @@ import android.arch.persistence.room.TypeConverters;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
-import com.project.pv239.customtimealarm.helpers.Converters.TrafficModelConverter;
-import com.project.pv239.customtimealarm.helpers.Converters.TravelModeConverter;
+import com.project.pv239.customtimealarm.helpers.converters.TrafficModelConverter;
+import com.project.pv239.customtimealarm.helpers.converters.TravelModeConverter;
 
 import java.util.Objects;
 

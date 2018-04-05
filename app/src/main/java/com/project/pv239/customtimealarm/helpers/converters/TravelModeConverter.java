@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.helpers.Converters;
+package com.project.pv239.customtimealarm.helpers.converters;
 
 import android.arch.persistence.room.TypeConverter;
 

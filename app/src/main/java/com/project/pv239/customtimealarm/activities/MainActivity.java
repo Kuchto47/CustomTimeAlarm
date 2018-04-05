@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.project.pv239.customtimealarm.Fragments.MainFragment;
+import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.R;
 
 public class MainActivity extends AppCompatActivity {

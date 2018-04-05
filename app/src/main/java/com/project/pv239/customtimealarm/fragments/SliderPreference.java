@@ -4,16 +4,13 @@
  * Licensed under the MIT License (see LICENSE.txt)
  */
 
-package com.project.pv239.customtimealarm.Fragments;
+package com.project.pv239.customtimealarm.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
-import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.project.pv239.customtimealarm.R;
