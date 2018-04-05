@@ -9,7 +9,7 @@
             android:title="@string/bedtime"
             android:defaultValue="false"
             android:persistent="true" />
-        <com.project.pv239.customtimealarm.Fragments.SliderPreference
+        <com.project.pv239.customtimealarm.fragments.SliderPreference
             android:title="@string/time_to_sleep"
             android:key="sleep_time"
             android:persistent="true"

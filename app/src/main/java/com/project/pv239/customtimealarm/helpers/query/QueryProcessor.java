@@ -1,11 +1,11 @@
-package com.project.pv239.customtimealarm.helpers.Query;
+package com.project.pv239.customtimealarm.helpers.query;
 
 import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
-import com.project.pv239.customtimealarm.helpers.Places.PlacesProvider;
-import com.project.pv239.customtimealarm.helpers.Time.TimeHelper;
-import com.project.pv239.customtimealarm.helpers.Transport.TransportDetailProvider;
+import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
+import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
+import com.project.pv239.customtimealarm.helpers.transport.TransportDetailProvider;
 
 public class QueryProcessor {
     private String queryTemplate = "https://maps.googleapis.com/maps/api/directions/json?origin={ORIGIN}&destination={DESTINATION}&mode={MODE}&alternatives=false&arrival_time={TIME_OF_ARRIVAL}&traffic_model={MODEL}&key={API_KEY}";

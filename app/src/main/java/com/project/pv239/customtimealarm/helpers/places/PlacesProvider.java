@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.helpers.Places;
+package com.project.pv239.customtimealarm.helpers.places;
 
 public class PlacesProvider {
     public static String getOrigin() {

@@ -25,7 +25,7 @@
  * reference material, and as a result, were extremely helpful.
  */
 
-package com.project.pv239.customtimealarm.Fragments;
+package com.project.pv239.customtimealarm.fragments;
 
 import android.content.Context;
 import android.content.res.TypedArray;
