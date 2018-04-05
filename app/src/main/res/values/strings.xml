@@ -7,7 +7,7 @@
     <string name="notification_GTFO">Notification for departure</string>
     <string name="bedtime">Bedtime</string>
     <string name="time_to_sleep">Time to sleep</string>
-    <string name="snooze_time">Snooze time</string>
+    <string name="snooze_time">Snooze time in minutes</string>
     <string name="morning_time">Time for morning routine</string>
     <string name="transport_type">Type of transport</string>
 </resources>

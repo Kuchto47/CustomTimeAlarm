@@ -6,15 +6,28 @@
 
         <SwitchPreference
             android:key="bedtime"
-            android:title="@string/bedtime" />
-        <Preference
-            android:key="bedtime_time"
-            android:title="@string/time_to_sleep" />
-
+            android:title="@string/bedtime"
+            android:defaultValue="false"
+            android:persistent="true" />
+        <com.project.pv239.customtimealarm.Fragments.SliderPreference
+            android:title="@string/time_to_sleep"
+            android:key="sleep_time"
+            android:persistent="true"
+            android:numeric="integer"
+            android:defaultValue="@integer/eight"/>
         <SwitchPreference
             android:title="@string/notification_GTFO"
-            android:key="GTFO"/>
+            android:key="GTFO"
+            android:defaultValue="false"
+            android:persistent="true" />
         <ListPreference
-            android:title="@string/snooze_time"/>
+            android:title="@string/snooze_time"
+            android:key="snooze"
+            android:entries="@array/snooze_vals"
+            android:entryValues="@array/snooze_vals"
+            android:defaultValue="5"
+            android:persistent="true"
+            />
+
     </PreferenceCategory>
 </PreferenceScreen>
