@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 
@@ -17,6 +18,9 @@ public interface AlarmDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void addAlarm(Alarm alarm);
+
+    @Update
+    void updateAlarm(Alarm alarm);
 
     @Delete
     void deleteAlarm(Alarm alarm);

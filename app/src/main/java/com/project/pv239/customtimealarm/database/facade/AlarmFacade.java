@@ -21,6 +21,10 @@ public class AlarmFacade {
         alarmDao.addAlarm(alarm);
     }
 
+    public void updateAlarm(Alarm alarm) {
+        alarmDao.updateAlarm(alarm);
+    }
+
     public void deleteAlarm(Alarm alarm) {
         alarmDao.deleteAlarm(alarm);
     }
