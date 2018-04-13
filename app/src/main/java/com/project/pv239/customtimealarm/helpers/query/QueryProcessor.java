@@ -1,6 +1,7 @@
 package com.project.pv239.customtimealarm.helpers.query;
 
 import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
+import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
@@ -10,6 +11,9 @@ import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 import com.project.pv239.customtimealarm.helpers.transport.TransportDetailProvider;
 
 public class QueryProcessor {
+
+    private Alarm alarm;
+
     private String queryTemplate = "https://maps.googleapis.com/maps/api/directions/json?origin={ORIGIN}&destination={DESTINATION}&mode={MODE}&alternatives=false&arrival_time={TIME_OF_ARRIVAL}&traffic_model={MODEL}&key={API_KEY}";
     private final String originHolder = "{ORIGIN}";
     private final String destinationHolder = "{DESTINATION}";
@@ -18,6 +22,10 @@ public class QueryProcessor {
     private final String arrivalTimeHolder = "{TIME_OF_ARRIVAL}";
     private final String trafficModelHolder = "{MODEL}";
 
+    public QueryProcessor(Alarm alarm) {
+        this.alarm = alarm;
+    }
+
     public String getQuery() {
         return replacePlaceHoldersInQuery();
     }
@@ -25,11 +33,11 @@ public class QueryProcessor {
     private String replacePlaceHoldersInQuery() {
         String query = queryTemplate;
         query = putApiKeyIntoQuery(query, GoogleMapsApiKeyGetter.getApiKey());
-        query = putArrivalTimeIntoQuery(query, TimeHelper.getTimeOfNextArrivalInSecondsAsString());
-        query = putDestinationIntoQuery(query, PlacesProvider.getDestination());
+        query = putArrivalTimeIntoQuery(query, TimeHelper.getTimeOfNextArrivalInSecondsAsString(alarm.getTimeOfArrival()));
+        query = putDestinationIntoQuery(query, PlacesProvider.getDestination(alarm.getDestination()));
         query = putOriginIntoQuery(query, PlacesProvider.getOrigin());
-        query = putTrafficModelIntoQuery(query, TransportDetailProvider.getTrafficModel());
-        query = putTravelModeIntoQuery(query, TransportDetailProvider.getTravelMode());
+        query = putTrafficModelIntoQuery(query, alarm.getTrafficModel());
+        query = putTravelModeIntoQuery(query, alarm.getTravelMode());
         return query;
     }
 
