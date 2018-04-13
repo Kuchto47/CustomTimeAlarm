@@ -1,10 +1,18 @@
 package com.project.pv239.customtimealarm.enums;
 
-public enum TravelMode {
-    DRIVING, WALKING, BICYCLING;
+import android.support.annotation.IntDef;
 
-    @Override
-    public String toString() {
-        return super.toString().toLowerCase();
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import static com.project.pv239.customtimealarm.enums.TravelMode.BICYCLING;
+import static com.project.pv239.customtimealarm.enums.TravelMode.DRIVING;
+import static com.project.pv239.customtimealarm.enums.TravelMode.WALKING;
+
+@IntDef({DRIVING, WALKING, BICYCLING})
+@Retention(RetentionPolicy.SOURCE)
+public @interface TravelMode {
+    int DRIVING = 0;
+    int WALKING = 1;
+    int BICYCLING = 2;
 }

@@ -3,6 +3,8 @@ package com.project.pv239.customtimealarm.helpers.query;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
+import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
+import com.project.pv239.customtimealarm.helpers.converters.TravelModeToString;
 import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
 import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 import com.project.pv239.customtimealarm.helpers.transport.TransportDetailProvider;
@@ -43,15 +45,15 @@ public class QueryProcessor {
         return query.replace(apiKeyHolder, apiKey);
     }
 
-    private String putTravelModeIntoQuery(String query, TravelMode travelMode) {
-        return query.replace(travelModeHolder, travelMode.toString());
+    private String putTravelModeIntoQuery(String query, int travelMode) {
+        return query.replace(travelModeHolder, TravelModeToString.get(travelMode));
     }
 
     private String putArrivalTimeIntoQuery(String query, String arrivalTime) {
         return query.replace(arrivalTimeHolder, arrivalTime);
     }
 
-    private String putTrafficModelIntoQuery(String query, TrafficModel trafficModel) {
-        return query.replace(trafficModelHolder, trafficModel.toString());
+    private String putTrafficModelIntoQuery(String query, int trafficModel) {
+        return query.replace(trafficModelHolder, TrafficModelToString.get(trafficModel));
     }
 }
