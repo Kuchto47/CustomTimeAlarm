@@ -3,12 +3,9 @@ package com.project.pv239.customtimealarm.database.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
-import com.project.pv239.customtimealarm.helpers.converters.TrafficModelConverter;
-import com.project.pv239.customtimealarm.helpers.converters.TravelModeConverter;
 
 import java.util.Objects;
 
@@ -25,14 +22,14 @@ public class Alarm {
     private String timeOfArrival;
 
     @ColumnInfo(name = "traffic_model")
-    @TypeConverters(TrafficModelConverter.class)
-    private TrafficModel trafficModel;
+    @TrafficModel
+    private int trafficModel;
 
     @ColumnInfo(name = "travel_mode")
-    @TypeConverters(TravelModeConverter.class)
-    private TravelMode travelMode;
+    @TravelMode
+    private int travelMode;
 
-    public Alarm(String destination, String timeOfArrival, TrafficModel trafficModel, TravelMode travelMode){
+    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
@@ -63,19 +60,19 @@ public class Alarm {
         this.timeOfArrival = timeOfArrival;
     }
 
-    public TrafficModel getTrafficModel() {
+    public int getTrafficModel() {
         return trafficModel;
     }
 
-    public void setTrafficModel(TrafficModel trafficModel) {
+    public void setTrafficModel(int trafficModel) {
         this.trafficModel = trafficModel;
     }
 
-    public TravelMode getTravelMode() {
+    public int getTravelMode() {
         return travelMode;
     }
 
-    public void setTravelMode(TravelMode travelMode) {
+    public void setTravelMode(int travelMode) {
         this.travelMode = travelMode;
     }
 
