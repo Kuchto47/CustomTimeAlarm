@@ -20,13 +20,9 @@ import com.project.pv239.customtimealarm.R;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO consider this to remove in some class that is extending Application/ask tutor how to manage this
-        context = getApplicationContext();
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
         //TODO test log

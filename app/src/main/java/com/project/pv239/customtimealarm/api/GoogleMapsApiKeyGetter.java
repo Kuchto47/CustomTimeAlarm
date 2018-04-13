@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.project.pv239.customtimealarm.App;
 import com.project.pv239.customtimealarm.activities.MainActivity;
 
 public class GoogleMapsApiKeyGetter {
@@ -13,7 +14,7 @@ public class GoogleMapsApiKeyGetter {
     private static String key = "com.google.android.geo.API_KEY";
 
     public static String getApiKey() {
-        return GoogleMapsApiKeyGetter.getMetaDataApiKey(MainActivity.context);
+        return GoogleMapsApiKeyGetter.getMetaDataApiKey(App.getInstance());
     }
 
     private static String getMetaDataApiKey(Context context) {
