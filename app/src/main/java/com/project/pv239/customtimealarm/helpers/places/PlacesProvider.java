@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 public class PlacesProvider {
     public static String getOrigin() {
-        return PlacesProvider.getQueryPlaceString("origin");
+        return PlacesProvider.getQueryPlaceString("tehelna 5 dunajska luzna");
     }
 
     public static String getDestination(String dest) {
