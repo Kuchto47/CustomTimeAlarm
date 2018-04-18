@@ -29,11 +29,19 @@ public class Alarm {
     @TravelMode
     private int travelMode;
 
-    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode){
+    @ColumnInfo(name = "latitude")
+    private float latitude;
+
+    @ColumnInfo(name = "longitude")
+    private float longitude;
+
+    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode, float latitude, float longitude){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void setId(int id){
@@ -74,6 +82,22 @@ public class Alarm {
 
     public void setTravelMode(int travelMode) {
         this.travelMode = travelMode;
+    }
+
+    public float getLatitude(){
+        return latitude;
+    }
+
+    public void setLatitude(float latitude){
+        this.latitude = latitude;
+    }
+
+    public float getLongitude(){
+        return longitude;
+    }
+
+    public void setLongitude(float longitude){
+        this.longitude = longitude;
     }
 
     @Override
