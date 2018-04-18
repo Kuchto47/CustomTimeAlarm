@@ -34,14 +34,4 @@ public class GoogleMapsApi {
     public GoogleMapsService getService(){
         return mService;
     }
-
-    //private int result;
-
-    /*public Future<Integer> getTimeOfTravelInSeconds(Alarm alarm) {
-        QueryProcessor queryProcessor = new QueryProcessor(alarm);
-        String request = queryProcessor.getQuery();
-        final int result;
-        this.constructRequest(request);
-        return 1234;
-    }*/
 }
