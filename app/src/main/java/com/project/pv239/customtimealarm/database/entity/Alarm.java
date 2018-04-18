@@ -30,12 +30,12 @@ public class Alarm {
     private int travelMode;
 
     @ColumnInfo(name = "latitude")
-    private float latitude;
+    private double latitude;
 
     @ColumnInfo(name = "longitude")
-    private float longitude;
+    private double longitude;
 
-    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode, float latitude, float longitude){
+    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode, double latitude, double longitude){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
@@ -84,19 +84,19 @@ public class Alarm {
         this.travelMode = travelMode;
     }
 
-    public float getLatitude(){
+    public double getLatitude(){
         return latitude;
     }
 
-    public void setLatitude(float latitude){
+    public void setLatitude(double latitude){
         this.latitude = latitude;
     }
 
-    public float getLongitude(){
+    public double getLongitude(){
         return longitude;
     }
 
-    public void setLongitude(float longitude){
+    public void setLongitude(double longitude){
         this.longitude = longitude;
     }
 
