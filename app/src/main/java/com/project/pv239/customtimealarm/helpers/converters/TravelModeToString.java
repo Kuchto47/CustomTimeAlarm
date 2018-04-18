@@ -11,7 +11,6 @@ public class TravelModeToString {
                 return "bicycling";
             default:
                 return "driving";
-                //TODO What should be returned if for some reason we get bad number? For now i chose driving because that's default value in google maps api anyway.
         }
     }
 }
