@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.App;
-import com.project.pv239.customtimealarm.activities.MainActivity;
 
 public class GoogleMapsApiKeyGetter {
     private static String EMPTY_STRING = "";

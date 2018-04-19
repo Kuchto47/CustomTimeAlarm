@@ -3,7 +3,6 @@ package com.project.pv239.customtimealarm.database;
 import android.arch.persistence.room.Room;
 
 import com.project.pv239.customtimealarm.App;
-import com.project.pv239.customtimealarm.activities.MainActivity;
 
 public class DatabaseProvider {
     private static AppDatabase appDatabase = null;

@@ -2,19 +2,13 @@ package com.project.pv239.customtimealarm.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
-
-import java.util.ArrayList;
-
-import butterknife.ButterKnife;
 
 public class SetAlarmFragment extends Fragment{
 
