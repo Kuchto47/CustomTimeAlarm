@@ -9,6 +9,8 @@ import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString
 import com.project.pv239.customtimealarm.helpers.converters.TravelModeToString;
 import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
 
+import java.lang.ref.WeakReference;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -30,7 +32,8 @@ public class DirectionsGetter {
         );
 
         try{
-            return new AsyncTask<Void, Void, Integer>(){
+            return new GetTimeTask(this, responseCall).execute().get();
+            /*return new AsyncTask<Void, Void, Integer>(){
                 @Override
                 protected Integer doInBackground(Void... voids) {
                     try{
@@ -42,9 +45,30 @@ public class DirectionsGetter {
                     }
 
                 }
-            }.execute().get();
+            }.execute().get();*/
         } catch (Exception e){
             return -1;
+        }
+    }
+
+    private static class GetTimeTask extends AsyncTask<Void, Void, Integer> {
+        private WeakReference<DirectionsGetter> mContext;
+        private Call<GoogleMapsApiResponse> responseCall;
+
+        private GetTimeTask(DirectionsGetter context, Call<GoogleMapsApiResponse> responseCall){
+            this.mContext = new WeakReference<>(context);
+            this.responseCall = responseCall;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... voids) {
+            try{
+                Response<GoogleMapsApiResponse> gResponse = responseCall.execute();
+                GoogleMapsApiResponse responseBody = gResponse.body();
+                return responseBody.routes[0].legs[0].duration_in_traffic.value;
+            } catch (Exception e) {
+                return -1;
+            }
         }
     }
 }
