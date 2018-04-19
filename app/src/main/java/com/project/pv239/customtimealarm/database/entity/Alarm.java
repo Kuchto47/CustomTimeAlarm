@@ -36,7 +36,8 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "longitude")
     private double longitude;
 
-    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode, double latitude, double longitude){
+    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode,
+                 double latitude, double longitude){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
@@ -109,11 +110,14 @@ public class Alarm implements Serializable{
         return Objects.equals(getDestination(), alarm.getDestination()) &&
                 Objects.equals(getTimeOfArrival(), alarm.getTimeOfArrival()) &&
                 getTrafficModel() == alarm.getTrafficModel() &&
-                getTravelMode() == alarm.getTravelMode();
+                getTravelMode() == alarm.getTravelMode() &&
+                getLatitude() == alarm.getLatitude() &&
+                getLongitude() == alarm.getLongitude();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(), getTravelMode());
+        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(),
+                getTravelMode(), getLatitude(), getLongitude());
     }
 }
