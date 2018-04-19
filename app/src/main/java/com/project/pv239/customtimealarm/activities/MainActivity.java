@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.pv239.customtimealarm.api.DirectionsGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
@@ -35,6 +36,12 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
+
+        DirectionsGetter d = new DirectionsGetter();
+
+        //TODO: test log - remove after PR
+        Log.d("== TEST HERE ==", Integer.toString(d.getTimeToDestinationInSeconds(new Alarm("kralovianky 71", "1524052800", TrafficModel.BEST_GUESS, TravelMode.DRIVING))));
+
     }
 
     private void loadFragment(Bundle savedInstanceState) {
