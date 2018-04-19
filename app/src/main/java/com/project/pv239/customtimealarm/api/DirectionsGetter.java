@@ -33,21 +33,9 @@ public class DirectionsGetter {
 
         try{
             return new GetTimeTask(this, responseCall).execute().get();
-            /*return new AsyncTask<Void, Void, Integer>(){
-                @Override
-                protected Integer doInBackground(Void... voids) {
-                    try{
-                        Response<GoogleMapsApiResponse> gResponse = responseCall.execute();
-                        GoogleMapsApiResponse responseBody = gResponse.body();
-                        return responseBody.routes[0].legs[0].duration_in_traffic.value;
-                    } catch (Exception e) {
-                        return -1;
-                    }
-
-                }
-            }.execute().get();*/
         } catch (Exception e){
             return -1;
+            //TODO maybe throw some error?...
         }
     }
 
