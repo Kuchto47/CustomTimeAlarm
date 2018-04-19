@@ -27,7 +27,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         mListener = listener;
     }
 
-    public void refreshUsers(@NonNull List<Alarm> alarms) {
+    public void refreshAlarms(@NonNull List<Alarm> alarms) {
         mAlarms = alarms;
         notifyDataSetChanged();
     }

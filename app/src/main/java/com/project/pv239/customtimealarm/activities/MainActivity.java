@@ -37,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }.execute();
 
-        DirectionsGetter d = new DirectionsGetter();
-
-        //TODO: test log - remove after PR
-        Log.d("== TEST HERE ==", Integer.toString(d.getTimeToDestinationInSeconds(new Alarm("kralovianky 71", "1524052800", TrafficModel.BEST_GUESS, TravelMode.DRIVING))));
-
     }
 
     private void loadFragment(Bundle savedInstanceState) {

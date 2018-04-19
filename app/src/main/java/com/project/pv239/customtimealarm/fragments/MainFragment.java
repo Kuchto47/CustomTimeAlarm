@@ -79,7 +79,7 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
 
         @Override
         protected void onPostExecute(List<Alarm> alarms) {
-            mAdapter.get().refreshUsers(alarms);
+            mAdapter.get().refreshAlarms(alarms);
         }
     }
 }
