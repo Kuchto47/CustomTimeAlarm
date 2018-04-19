@@ -11,7 +11,6 @@ public class TrafficModelToString {
                 return "pessimistic";
             default:
                 return "best_guess";
-            //TODO What should be returned if for some reason we get bad number? For now i chose best_guess because that's default value in google maps api (I think).
         }
     }
 }
