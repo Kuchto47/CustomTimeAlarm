@@ -28,9 +28,11 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
 
     private Context mContext;
     private List<Alarm> mAlarms;
+    private AlarmsAdapter.AdapterListener mListener;
 
-    public AlarmsAdapter(@NonNull List<Alarm> alarms) {
+    public AlarmsAdapter(@NonNull List<Alarm> alarms, @NonNull AdapterListener listener) {
         mAlarms = alarms;
+        mListener = listener;
     }
 
     public void refreshUsers(@NonNull List<Alarm> alarms) {
@@ -52,37 +54,9 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         Alarm alarm = mAlarms.get(position);
         holder.mDestination.setText(alarm.getDestination());
         holder.mTime.setText(alarm.getTimeOfArrival());
+        holder.mAlarm = alarm;
 
     }
-
-    @Override
-    public void onViewAttachedToWindow(ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-
-        final Alarm alarm = holder.mAlarm;
-
-        if (alarm != null) {
-            holder.getMapFragmentAndCallback(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    LatLng position = new LatLng(alarm.getLatitude(),alarm.getLongitude());
-                    googleMap.addMarker(new MarkerOptions().position(position));
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(position));
-                }
-            });
-        }
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(ViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-
-        if (holder.mAlarm != null) {
-            // If error still occur unpredictably, it's best to remove fragment here
-            //holder.removeMapFragment();
-        }
-    }
-
 
     @Override
     public int getItemCount() {
@@ -95,33 +69,21 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         TextView mDestination;
         @BindView(R.id.time)
         TextView mTime;
-        private SupportMapFragment mapFragment;
         Alarm mAlarm;
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onItemClicked(mAlarm);
+                }
+            });
         }
-        public SupportMapFragment getMapFragmentAndCallback(OnMapReadyCallback callback) {
-            if (mapFragment == null) {
-                mapFragment = SupportMapFragment.newInstance();
-                mapFragment.getMapAsync(callback);
-            }
+    }
 
-            // for fragment
-            // FragmentManager fragmentManager = getChildFragmentManager();
-            // for activity
-            FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.map, mapFragment).commit();
-            return mapFragment;
-        }
-
-        public void removeMapFragment() {
-            if (mapFragment != null) {
-                FragmentManager fragmentManager = ((AppCompatActivity) mContext).getSupportFragmentManager();
-                fragmentManager.beginTransaction().remove(mapFragment).commitAllowingStateLoss();
-                mapFragment = null;
-            }
-        }
+    public interface AdapterListener {
+        void onItemClicked(Alarm alarm);
     }
 }

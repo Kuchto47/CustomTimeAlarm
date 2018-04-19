@@ -22,9 +22,9 @@ import java.util.Locale;
  */
 public class SliderPreference extends DialogPreference {
 
-	public final static int MAXIMUM = 24*60;
+	public final static int MAXIMUM = 12*60-1;
 	public final static int MINIMUM = 0;
-	protected final static int SEEKBAR_RESOLUTION = 24*60;
+	protected final static int SEEKBAR_RESOLUTION = 12*60-1;
 
 	protected int mValue;
 	protected int mSeekBarValue;

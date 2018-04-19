@@ -7,10 +7,11 @@ import android.arch.persistence.room.PrimaryKey;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-public class Alarm {
+public class Alarm implements Serializable{
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
