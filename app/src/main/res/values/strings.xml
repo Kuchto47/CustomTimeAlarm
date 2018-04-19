@@ -10,4 +10,5 @@
     <string name="snooze_time">Snooze time in minutes</string>
     <string name="morning_time">Time for morning routine</string>
     <string name="transport_type">Type of transport</string>
+    <string name="alarms">Alarms</string>
 </resources>

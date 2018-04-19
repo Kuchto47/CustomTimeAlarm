@@ -7,10 +7,11 @@ import android.arch.persistence.room.PrimaryKey;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-public class Alarm {
+public class Alarm implements Serializable{
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private int id;
@@ -29,11 +30,20 @@ public class Alarm {
     @TravelMode
     private int travelMode;
 
-    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode){
+    @ColumnInfo(name = "latitude")
+    private double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
+
+    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode,
+                 double latitude, double longitude){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void setId(int id){
@@ -76,6 +86,22 @@ public class Alarm {
         this.travelMode = travelMode;
     }
 
+    public double getLatitude(){
+        return latitude;
+    }
+
+    public void setLatitude(double latitude){
+        this.latitude = latitude;
+    }
+
+    public double getLongitude(){
+        return longitude;
+    }
+
+    public void setLongitude(double longitude){
+        this.longitude = longitude;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,11 +110,14 @@ public class Alarm {
         return Objects.equals(getDestination(), alarm.getDestination()) &&
                 Objects.equals(getTimeOfArrival(), alarm.getTimeOfArrival()) &&
                 getTrafficModel() == alarm.getTrafficModel() &&
-                getTravelMode() == alarm.getTravelMode();
+                getTravelMode() == alarm.getTravelMode() &&
+                getLatitude() == alarm.getLatitude() &&
+                getLongitude() == alarm.getLongitude();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(), getTravelMode());
+        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(),
+                getTravelMode(), getLatitude(), getLongitude());
     }
 }

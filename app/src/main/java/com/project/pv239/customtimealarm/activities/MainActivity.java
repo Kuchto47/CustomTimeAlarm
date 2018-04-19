@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... voids) {
                 AlarmFacade alarmFacade = new AlarmFacade();
-                alarmFacade.addAlarm(new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING));
+                alarmFacade.addAlarm(new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,45,45));
                 List<Alarm> obts = alarmFacade.getAllAlarms();
                 for (Alarm obt : obts) {
                     Log.d("== ALARM ==", obt.getDestination()+" "+obt.getTimeOfArrival()+" "+obt.getTrafficModel()+" "+obt.getTravelMode());
@@ -36,11 +36,6 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
-
-        DirectionsGetter d = new DirectionsGetter();
-
-        //TODO: test log - remove after PR
-        Log.d("== TEST HERE ==", Integer.toString(d.getTimeToDestinationInSeconds(new Alarm("kralovianky 71", "1524052800", TrafficModel.BEST_GUESS, TravelMode.DRIVING))));
 
     }
 
