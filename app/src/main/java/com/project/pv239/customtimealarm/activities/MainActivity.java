@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.project.pv239.customtimealarm.api.DirectionsGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
@@ -36,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }.execute();
-
     }
 
     private void loadFragment(Bundle savedInstanceState) {

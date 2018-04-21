@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.api.model;
+package com.project.pv239.customtimealarm.api.model.directions;
 
 public class Leg {
     public LegDistance distance;

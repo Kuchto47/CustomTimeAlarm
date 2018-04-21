@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.project.pv239.customtimealarm">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,6 +26,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCHqgjw-K-ffk-m4eo78eWaag4YOSWGlAE"/>
+        <meta-data
+            android:name="lat.lon.API_KEY"
+            android:value="AIzaSyD0nzeYV47k_EHuWgcMDnKaLu0ZuOdDKtg"/>
     </application>
 
 
