@@ -133,4 +133,9 @@ public class Alarm implements Serializable{
         return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(),
                 getTravelMode(), getLatitude(), getLongitude(), isOn());
     }
+
+    @Override
+    public String toString() {
+        return this.getDestination()+" "+this.getTimeOfArrival()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn();
+    }
 }

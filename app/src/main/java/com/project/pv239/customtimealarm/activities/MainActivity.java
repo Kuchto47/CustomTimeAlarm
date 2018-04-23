@@ -27,13 +27,18 @@ public class MainActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... voids) {
                 AlarmFacade alarmFacade = new AlarmFacade();
-                Alarm a = new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,49.209859, 16.599072, true);
-                alarmFacade.addAlarm(a);
-                a.setOn(false);
-                alarmFacade.updateAlarm(a);
+                /*Alarm a = new Alarm("MyTest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,49.209859, 16.599072, true);
+                alarmFacade.addAlarm(a);*/
                 List<Alarm> obts = alarmFacade.getAllAlarms();
                 for (Alarm obt : obts) {
-                    Log.d("== ALARM ==", obt.getDestination()+" "+obt.getTimeOfArrival()+" "+obt.getTrafficModel()+" "+obt.getTravelMode());
+                    Log.d("== ALARM1 ==", obt.toString());
+                }
+                Alarm a2 = alarmFacade.getAllAlarms().get(1);
+                a2.setOn(!a2.isOn());
+                alarmFacade.updateAlarm(a2);
+                obts = alarmFacade.getAllAlarms();
+                for (Alarm obt : obts) {
+                    Log.d("== ALARM2 ==", obt.toString());
                 }
                 return null;
             }
