@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -44,7 +45,11 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
         mUnbinder = ButterKnife.bind(this, view);
         mAdapter = new AlarmsAdapter(new ArrayList<Alarm>(), this);
         mList.setAdapter(mAdapter);
-        mList.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        mList.setLayoutManager(manager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(),
+                manager.getOrientation());
+        mList.addItemDecoration(dividerItemDecoration);
 
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
         return view;

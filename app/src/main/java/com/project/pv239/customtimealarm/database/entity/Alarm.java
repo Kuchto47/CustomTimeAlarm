@@ -36,14 +36,18 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "longitude")
     private double longitude;
 
+    @ColumnInfo(name = "on")
+    private boolean on;
+
     public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode,
-                 double latitude, double longitude){
+                 double latitude, double longitude, boolean on){
         this.destination = destination;
         this.timeOfArrival = timeOfArrival;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.on = on;
     }
 
     public void setId(int id){
@@ -102,6 +106,14 @@ public class Alarm implements Serializable{
         this.longitude = longitude;
     }
 
+    public boolean isOn() {
+        return on;
+    }
+
+    public void setOn(boolean on) {
+        this.on = on;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,12 +124,13 @@ public class Alarm implements Serializable{
                 getTrafficModel() == alarm.getTrafficModel() &&
                 getTravelMode() == alarm.getTravelMode() &&
                 getLatitude() == alarm.getLatitude() &&
-                getLongitude() == alarm.getLongitude();
+                getLongitude() == alarm.getLongitude() &&
+                isOn() == alarm.isOn();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(),
-                getTravelMode(), getLatitude(), getLongitude());
+                getTravelMode(), getLatitude(), getLongitude(), isOn());
     }
 }
