@@ -55,7 +55,6 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
         return view;
     }
 
-
     @Override
     public void onItemClicked(Alarm alarm) {
         SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm);
@@ -84,7 +83,7 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
 
         @Override
         protected void onPostExecute(List<Alarm> alarms) {
-            mAdapter.get().refreshAlarms(alarms);
+            mAdapter.get().getAlarmsFromDb(alarms);
         }
     }
 }

@@ -11,9 +11,11 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.MapFragment;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.fragments.MainFragment;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -25,14 +27,14 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
 
     private Context mContext;
     private List<Alarm> mAlarms;
-    private AlarmsAdapter.AdapterListener mListener;
+    private MainFragment mListener;
 
-    public AlarmsAdapter(@NonNull List<Alarm> alarms, @NonNull AdapterListener listener) {
+    public AlarmsAdapter(@NonNull List<Alarm> alarms, @NonNull MainFragment listener) {
         mAlarms = alarms;
         mListener = listener;
     }
 
-    public void refreshAlarms(@NonNull List<Alarm> alarms) {
+    public void getAlarmsFromDb(@NonNull List<Alarm> alarms) {
         mAlarms = alarms;
         notifyDataSetChanged();
     }
@@ -73,30 +75,22 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            (new UpdateAlarmTask(new WeakReference<>(mHolder.mAlarm), new WeakReference<>(mAdapter))).execute();
+            mHolder.mAlarm.setOn(isChecked);
+            (new UpdateAlarmTask(new WeakReference<>(mHolder.mAlarm))).execute();
         }
     }
 
-    public static class UpdateAlarmTask extends AsyncTask<Void, Void, Alarm>{
+    public static class UpdateAlarmTask extends AsyncTask<Void, Void, List<Alarm>>{
         private WeakReference<Alarm> mAlarm;
-        private WeakReference<AlarmsAdapter> mAdapter;
-        private List<Alarm> mAlarms;
 
-        public UpdateAlarmTask(WeakReference<Alarm> alarm, WeakReference<AlarmsAdapter> adapter){
+        public UpdateAlarmTask(WeakReference<Alarm> alarm){
             mAlarm = alarm;
-            mAdapter = adapter;
         }
         @Override
-        protected Alarm doInBackground(Void... voids) {
+        protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
             alarmFacade.updateAlarm(mAlarm.get());
-            mAlarms = alarmFacade.getAllAlarms();
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Alarm alarm) {
-            mAdapter.get().refreshAlarms(mAlarms);
+            return alarmFacade.getAllAlarms();
         }
     }
 

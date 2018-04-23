@@ -1,5 +1,6 @@
 package com.project.pv239.customtimealarm.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
+import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -46,6 +50,14 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         SupportMapFragment mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
         Log.d("FRAGMENT CREATION", "i am fragment for alarm id " + mAlarm.getId());
+        new AsyncTask<Void, Void, Void>() {
+            protected Void doInBackground(Void... voids) {
+                AlarmFacade alarmFacade = new AlarmFacade();
+                mAlarm.setDestination("changed");
+                alarmFacade.updateAlarm(mAlarm);
+                return null;
+            }
+        }.execute();
         return view;
     }
 
