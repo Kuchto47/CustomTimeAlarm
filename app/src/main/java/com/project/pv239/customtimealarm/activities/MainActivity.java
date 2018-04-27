@@ -56,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void showCancellationAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder = this.setContentOfDialog(builder, this);
+        this.setContentOfDialog(builder, this);
         builder.create().show();
     }
 
-    private AlertDialog.Builder setContentOfDialog(AlertDialog.Builder builder, final Activity activity){
+    private void setContentOfDialog(AlertDialog.Builder builder, final Activity activity){
         builder.setTitle(R.string.cancellation_dialog_title).setMessage(R.string.cancellation_dialog_body);
         builder.setPositiveButton(R.string.cancellation_dialog_grant_permission_again_button, new DialogInterface.OnClickListener() {
             @Override
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
-        return builder;
     }
 
     private void loadFragment(Bundle savedInstanceState) {
