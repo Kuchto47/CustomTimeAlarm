@@ -1,19 +1,25 @@
 package com.project.pv239.customtimealarm.activities;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.pv239.customtimealarm.App;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.R;
+import com.project.pv239.customtimealarm.helpers.PermissionChecker;
 
 import java.util.List;
 
@@ -24,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
         //TODO test log
-        new AsyncTask<Void, Void, Void>() {
+        /*new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... voids) {
                 AlarmFacade alarmFacade = new AlarmFacade();
                 alarmFacade.addAlarm(new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,45,45));
@@ -34,7 +40,41 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return null;
             }
-        }.execute();
+        }.execute();*/
+        PermissionChecker.getLocationPermissionIfNotGranted(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch(requestCode){
+            case PermissionChecker.LOCATION_REQUEST_CODE:
+                if(!PermissionChecker.canAccessLocation()){
+                    this.showCancellationAlertDialog();
+                }
+        }
+    }
+
+    private void showCancellationAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder = this.setContentOfDialog(builder, this);
+        builder.create().show();
+    }
+
+    private AlertDialog.Builder setContentOfDialog(AlertDialog.Builder builder, final Activity activity){
+        builder.setTitle(R.string.cancellation_dialog_title).setMessage(R.string.cancellation_dialog_body);
+        builder.setPositiveButton(R.string.cancellation_dialog_grant_permission_again_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PermissionChecker.getLocationPermissionIfNotGranted(activity);
+            }
+        });
+        builder.setNegativeButton(R.string.cancellation_dialog_close_app_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        });
+        return builder;
     }
 
     private void loadFragment(Bundle savedInstanceState) {
