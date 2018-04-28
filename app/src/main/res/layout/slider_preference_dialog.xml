@@ -24,6 +24,7 @@ Licensed under the MIT License (see LICENSE.txt)
         android:layout_height="match_parent">
         <com.project.pv239.customtimealarm.fragments.CircularSeekBar
             android:id="@+id/slider_preference_seekbar"
+            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
         <TextView

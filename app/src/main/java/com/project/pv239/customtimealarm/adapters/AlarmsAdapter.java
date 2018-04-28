@@ -68,7 +68,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         AlarmsAdapter mAdapter;
         AlarmsAdapter.ViewHolder mHolder;
 
-        public SwitchListener(AlarmsAdapter adapter, ViewHolder holder){
+        SwitchListener(AlarmsAdapter adapter, ViewHolder holder){
             mAdapter = adapter;
             mHolder = holder;
         }
@@ -83,7 +83,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
     public static class UpdateAlarmTask extends AsyncTask<Void, Void, List<Alarm>>{
         private WeakReference<Alarm> mAlarm;
 
-        public UpdateAlarmTask(WeakReference<Alarm> alarm){
+        UpdateAlarmTask(WeakReference<Alarm> alarm){
             mAlarm = alarm;
         }
         @Override
@@ -103,7 +103,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         Switch mSwitch;
         Alarm mAlarm;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
@@ -113,9 +113,5 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
                 }
             });
         }
-    }
-
-    public interface AdapterListener {
-        void onItemClicked(Alarm alarm);
     }
 }

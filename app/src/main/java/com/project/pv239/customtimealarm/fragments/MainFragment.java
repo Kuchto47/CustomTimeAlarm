@@ -3,6 +3,7 @@ package com.project.pv239.customtimealarm.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DividerItemDecoration;
@@ -26,12 +27,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListener {
+public class MainFragment extends Fragment{
 
     private AlarmsAdapter mAdapter;
     private Unbinder mUnbinder;
     @BindView(android.R.id.list)
     RecyclerView mList;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -51,11 +54,16 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
                 manager.getOrientation());
         mList.addItemDecoration(dividerItemDecoration);
 
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Alarm("",0,0,0,0,0,0,true);
+            }
+        });
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
         return view;
     }
 
-    @Override
     public void onItemClicked(Alarm alarm) {
         SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
@@ -86,4 +94,6 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
             mAdapter.get().getAlarmsFromDb(alarms);
         }
     }
+
+
 }

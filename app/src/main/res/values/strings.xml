@@ -11,4 +11,5 @@
     <string name="morning_time">Time for morning routine</string>
     <string name="transport_type">Type of transport</string>
     <string name="alarms">Alarms</string>
+    <string name="enter_dest">Enter destination</string>
 </resources>
