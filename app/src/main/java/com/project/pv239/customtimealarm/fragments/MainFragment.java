@@ -57,7 +57,16 @@ public class MainFragment extends Fragment{
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Alarm("",0,0,0,0,0,0,true);
+                Alarm alarm = new Alarm("",0,0,0,0,0,0,true,30);
+                SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,true);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                if (fragmentManager != null) {
+                    fragmentManager.beginTransaction()
+                            .replace(android.R.id.content, setFragment, SetAlarmFragment.class.getSimpleName())
+                            .addToBackStack(null)
+                            .commit();
+                }
+
             }
         });
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
@@ -65,7 +74,7 @@ public class MainFragment extends Fragment{
     }
 
     public void onItemClicked(Alarm alarm) {
-        SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm);
+        SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,false);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         if (fragmentManager != null) {
             fragmentManager.beginTransaction()
@@ -85,8 +94,7 @@ public class MainFragment extends Fragment{
 
         protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            List<Alarm> alarms = alarmFacade.getAllAlarms();
-            return alarms;
+            return alarmFacade.getAllAlarms();
         }
 
         @Override

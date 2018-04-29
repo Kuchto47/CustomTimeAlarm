@@ -41,8 +41,11 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "on")
     private boolean on;
 
+    @ColumnInfo(name = "morning_routine")
+    private int morningRoutine;
+
     public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
-                 double latitude, double longitude, boolean on){
+                 double latitude, double longitude, boolean on, int morningRoutine){
         this.destination = destination;
         this.hour = hour;
         this.minute = minute;
@@ -51,6 +54,7 @@ public class Alarm implements Serializable{
         this.latitude = latitude;
         this.longitude = longitude;
         this.on = on;
+        this.morningRoutine = morningRoutine;
     }
 
     public void setId(int id){
@@ -129,6 +133,14 @@ public class Alarm implements Serializable{
         this.on = on;
     }
 
+    public int getMorningRoutine() {
+        return morningRoutine;
+    }
+
+    public void setMorningRoutine(int morningRoutine) {
+        this.morningRoutine = morningRoutine;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -141,17 +153,18 @@ public class Alarm implements Serializable{
                 getTravelMode() == alarm.getTravelMode() &&
                 getLatitude() == alarm.getLatitude() &&
                 getLongitude() == alarm.getLongitude() &&
-                isOn() == alarm.isOn();
+                isOn() == alarm.isOn() &&
+                getMorningRoutine() == alarm.getMorningRoutine();
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getDestination(), getHour(), getMinute(), getTrafficModel(),
-                getTravelMode(), getLatitude(), getLongitude(), isOn());
+                getTravelMode(), getLatitude(), getLongitude(), isOn(), getMorningRoutine());
     }
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getHour()+ ":"+ this.getMinute()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn();
+        return this.getDestination()+" "+this.getHour()+ ":"+ this.getMinute()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -51,14 +52,20 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     protected Spinner mTravelMode;
     @BindView(R.id.trafficModel)
     protected Spinner mTrafficModel;
+    @BindView(R.id.morning)
+    protected TextView mMorningView;
+    @BindView(R.id.morningSet)
+    protected SeekBar mMorningSet;
     private Unbinder mUnbinder;
+    private boolean mCreate;
 
 
-    public static SetAlarmFragment newInstance(Alarm alarm) {
+    public static SetAlarmFragment newInstance(Alarm alarm, boolean create) {
         SetAlarmFragment fragment = new SetAlarmFragment();
         Bundle bundle = new Bundle();
         bundle.putSerializable(ALARM_KEY, alarm);
         fragment.setArguments(bundle);
+        fragment.mCreate = create;
         return fragment;
     }
 
@@ -93,7 +100,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         mAlarm.setHour(hourOfDay);
                         mAlarm.setMinute(minute);
-                        new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
                     }
                 };
                 new TimePickerDialog(getContext(), listener, mAlarm.getHour(), mAlarm.getMinute(), true).show();
@@ -108,7 +114,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mAlarm.setTravelMode(position);
-                new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
             }
 
             @Override
@@ -125,12 +130,29 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mAlarm.setTrafficModel(position);
-                new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+        mMorningSet.setProgress(mAlarm.getMorningRoutine());
+        mMorningSet.setMax(240);
+        mMorningView.setText(String.valueOf(mAlarm.getMorningRoutine()));
+        mMorningSet.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mAlarm.setMorningRoutine(progress);
+                mMorningView.setText(String.valueOf(mAlarm.getMorningRoutine()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
         Log.d("FRAGMENT CREATION", "i am fragment for alarm id " + mAlarm.getId());
@@ -146,8 +168,19 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
             }
         });
         //TODO:query and handle (return false and do not update map)
-        new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mCreate){
+            //TODO: validate
+            new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+        }
+        else {
+            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+        }
     }
 
     @Override
@@ -167,9 +200,24 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
 
         @Override
         protected Void doInBackground(Void... voids) {
-
             AlarmFacade alarmFacade = new AlarmFacade();
             alarmFacade.updateAlarm(mAlarm.get());
+            return null;
+        }
+    }
+
+    static class CreateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+
+        private WeakReference<Alarm> mAlarm;
+
+        CreateAlarmInDbTask(WeakReference<Alarm> alarm){
+            mAlarm = alarm;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AlarmFacade alarmFacade = new AlarmFacade();
+            alarmFacade.addAlarm(mAlarm.get());
             return null;
         }
     }

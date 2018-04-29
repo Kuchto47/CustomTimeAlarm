@@ -23,27 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
-        //TODO test log
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... voids) {
-                AlarmFacade alarmFacade = new AlarmFacade();
-                Alarm a = new Alarm("MyTest", 12,47, TrafficModel.BEST_GUESS, TravelMode.DRIVING,49.209859, 16.599072, true);
-                alarmFacade.addAlarm(a);
-                List<Alarm> obts = alarmFacade.getAllAlarms();
-                for (Alarm obt : obts) {
-                    Log.d("== ALARM1 ==", obt.toString());
-                }
-                Alarm a2 = alarmFacade.getAllAlarms().get(0);
-                a2.setOn(!a2.isOn());
-                alarmFacade.updateAlarm(a2);
-                obts = alarmFacade.getAllAlarms();
-                for (Alarm obt : obts) {
-                    Log.d("== ALARM2 ==", obt.toString());
-                }
-                return null;
-            }
-        }.execute();
-
     }
 
     private void loadFragment(Bundle savedInstanceState) {
