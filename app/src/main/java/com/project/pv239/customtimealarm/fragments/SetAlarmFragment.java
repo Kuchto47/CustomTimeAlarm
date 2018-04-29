@@ -87,21 +87,25 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         FragmentManager f = getChildFragmentManager();
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
-        if (mCreate){
+        if (mCreate) {
             FloatingActionButton button = new FloatingActionButton(getContext());
             button.setImageResource(R.drawable.ic_done_white_24dp);
-            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT,Gravity.BOTTOM+Gravity.END);
+            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
             Resources r = getContext().getResources();
             int dpMargin = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,25,r.getDisplayMetrics());
-            p.setMargins(dpMargin,dpMargin,dpMargin,dpMargin);
-            mLayout.addView(button,p);
+                    TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
+            p.setMargins(dpMargin, dpMargin, dpMargin, dpMargin);
+            mLayout.addView(button, p);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO: validate that alarm is set correctly
-                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-                    closeFragment();
+                    destinationTextChanged(mDest);
+                    if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
+                        new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                        closeFragment();
+                    } else {
+                        Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }
@@ -187,20 +191,21 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
 
     public boolean destinationTextChanged(TextView v){
         mAlarm.setDestination(v.getText().toString());
+        mAlarm.setLatitude(1);//so we can create alarm for testing
         mMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 //TODO:update map according to query
             }
         });
-        //TODO:query and handle (return false and do not update map)
+        //TODO:query and handle (return false and do not update map) probably show toast and set latitude and longitude to 0s
         return true;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!mCreate){
+        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)){
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
         }
     }
