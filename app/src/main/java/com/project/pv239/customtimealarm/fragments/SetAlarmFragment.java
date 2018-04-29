@@ -1,12 +1,17 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -56,6 +62,8 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     protected TextView mMorningView;
     @BindView(R.id.morningSet)
     protected SeekBar mMorningSet;
+    @BindView(R.id.set_layout)
+    FrameLayout mLayout;
     private Unbinder mUnbinder;
     private boolean mCreate;
 
@@ -79,6 +87,24 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         FragmentManager f = getChildFragmentManager();
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
+        if (mCreate){
+            FloatingActionButton button = new FloatingActionButton(getContext());
+            button.setImageResource(R.drawable.ic_done_white_24dp);
+            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT,Gravity.BOTTOM+Gravity.END);
+            Resources r = getContext().getResources();
+            int dpMargin = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,25,r.getDisplayMetrics());
+            p.setMargins(dpMargin,dpMargin,dpMargin,dpMargin);
+            mLayout.addView(button,p);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO: validate that alarm is set correctly
+                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    closeFragment();
+                }
+            });
+        }
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -174,13 +200,14 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mCreate){
-            //TODO: validate
-            new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-        }
-        else {
+        if (!mCreate){
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
         }
+    }
+
+    public void closeFragment(){
+        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override
