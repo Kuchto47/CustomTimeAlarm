@@ -8,6 +8,7 @@ import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -90,7 +91,7 @@ public class Alarm implements Serializable{
     }
 
     public String getTimeOfArrival(){
-        return hour + ":" + minute;
+        return String.format(Locale.getDefault(),"%02d:%02d", hour, minute);
     }
 
     public int getTrafficModel() {

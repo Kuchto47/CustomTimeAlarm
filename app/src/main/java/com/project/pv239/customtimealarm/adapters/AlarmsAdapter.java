@@ -44,6 +44,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
     }
 
     @Override
+    @NonNull
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = R.layout.alarm_item;
         mContext = parent.getContext();
@@ -84,7 +85,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         }
     }
 
-    public void removeItem(int pos){
+    void removeItem(int pos){
         mAlarms.remove(pos);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, mAlarms.size());
@@ -134,9 +135,9 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
 
         void showDeleteDialog(Context context){
             new AlertDialog.Builder(context)
-                    .setTitle("Delete")
-                    .setMessage("Do you want to delete this alarm?")
-                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    .setTitle(R.string.delete_dialog_delete)
+                    .setMessage(R.string.delete_dialog_text)
+                    .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             new DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
                             removeItem(getAdapterPosition());
@@ -144,7 +145,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
                         }
 
                     })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
