@@ -3,8 +3,10 @@ package com.project.pv239.customtimealarm.fragments;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,12 +27,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListener {
+public class MainFragment extends Fragment{
 
     private AlarmsAdapter mAdapter;
     private Unbinder mUnbinder;
     @BindView(android.R.id.list)
     RecyclerView mList;
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -44,16 +48,33 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
         mUnbinder = ButterKnife.bind(this, view);
         mAdapter = new AlarmsAdapter(new ArrayList<Alarm>(), this);
         mList.setAdapter(mAdapter);
-        mList.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager manager = new LinearLayoutManager(getContext());
+        mList.setLayoutManager(manager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(),
+                manager.getOrientation());
+        mList.addItemDecoration(dividerItemDecoration);
 
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Alarm alarm = new Alarm("",0,0,0,0,0,0,true,30);
+                SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,true);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                if (fragmentManager != null) {
+                    fragmentManager.beginTransaction()
+                            .replace(android.R.id.content, setFragment, SetAlarmFragment.class.getSimpleName())
+                            .addToBackStack(null)
+                            .commit();
+                }
+
+            }
+        });
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
         return view;
     }
 
-
-    @Override
     public void onItemClicked(Alarm alarm) {
-        SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm);
+        SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,false);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         if (fragmentManager != null) {
             fragmentManager.beginTransaction()
@@ -73,13 +94,14 @@ public class MainFragment extends Fragment implements AlarmsAdapter.AdapterListe
 
         protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            List<Alarm> alarms = alarmFacade.getAllAlarms();
-            return alarms;
+            return alarmFacade.getAllAlarms();
         }
 
         @Override
         protected void onPostExecute(List<Alarm> alarms) {
-            mAdapter.get().refreshAlarms(alarms);
+            mAdapter.get().getAlarmsFromDb(alarms);
         }
     }
+
+
 }

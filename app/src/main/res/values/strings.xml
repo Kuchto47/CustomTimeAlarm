@@ -18,4 +18,5 @@
     </string>
     <string name="cancellation_dialog_close_app_button">Close</string>
     <string name="cancellation_dialog_grant_permission_again_button">Allow Access</string>
+    <string name="enter_dest">Enter destination</string>
 </resources>
