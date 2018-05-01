@@ -66,12 +66,14 @@ public class PlacesProvider {
                 Location location = this.getLastKnownLocation();
                 try{
                     List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    Address address = addresses.get(0);
-                    ArrayList<String> addressFragments = new ArrayList<>();
-                    for(int i = 0; i <= address.getMaxAddressLineIndex(); i++){
-                        addressFragments.add(address.getAddressLine(i));
+                    if(addresses.size() != 0){
+                        Address address = addresses.get(0);
+                        ArrayList<String> addressFragments = new ArrayList<>();
+                        for(int i = 0; i <= address.getMaxAddressLineIndex(); i++){
+                            addressFragments.add(address.getAddressLine(i));
+                        }
+                        return this.joinAddress(addressFragments);
                     }
-                    return this.joinAddress(addressFragments);
                 } catch (IOException exc) {
                     Log.d("IOEx", "Exception thrown while getting addresses. Message: "+exc.getMessage());
                 }

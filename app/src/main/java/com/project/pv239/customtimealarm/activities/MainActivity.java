@@ -2,17 +2,28 @@ package com.project.pv239.customtimealarm.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.project.pv239.customtimealarm.api.GoogleMapsApi;
+import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
+import com.project.pv239.customtimealarm.database.entity.Alarm;
+import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.enums.TrafficModel;
+import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
+import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -34,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         }.execute();*/
         PermissionChecker.getLocationPermissionIfNotGranted(this);
         //TODO: tests below :)
-        //Log.d("==TEST==", PlacesProvider.getOrigin());
-        /*GoogleMapsApi g = new GoogleMapsApi();
+        Log.d("==TEST==", PlacesProvider.getOrigin());
+        GoogleMapsApi g = new GoogleMapsApi();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-        Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525128259", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
-        Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));*/
+        Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525173860", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
+        Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));
     }
 
     @Override
