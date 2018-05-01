@@ -11,5 +11,12 @@
     <string name="morning_time">Time for morning routine</string>
     <string name="transport_type">Type of transport</string>
     <string name="alarms">Alarms</string>
+    <string name="cancellation_dialog_title">App is about to be closed</string>
+    <string name="cancellation_dialog_body">
+        For application it is mandatory to have GPS access or it will not be functional.
+        Do you wish to close the application or grant GPS access?
+    </string>
+    <string name="cancellation_dialog_close_app_button">Close</string>
+    <string name="cancellation_dialog_grant_permission_again_button">Allow Access</string>
     <string name="enter_dest">Enter destination</string>
 </resources>

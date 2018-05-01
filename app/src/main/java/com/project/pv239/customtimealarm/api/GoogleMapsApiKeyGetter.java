@@ -10,17 +10,22 @@ import com.project.pv239.customtimealarm.App;
 
 public class GoogleMapsApiKeyGetter {
     private static String EMPTY_STRING = "";
-    private static String key = "com.google.android.geo.API_KEY";
+    private static String gMapsKeyIdentifier = "com.google.android.geo.API_KEY";
+    private static String gMapsLatLonKeyIdentifier = "lat.lon.API_KEY";
 
     public static String getApiKey() {
-        return GoogleMapsApiKeyGetter.getMetaDataApiKey(App.getInstance());
+        return GoogleMapsApiKeyGetter.getApiKey(App.getInstance(), gMapsKeyIdentifier);
     }
 
-    private static String getMetaDataApiKey(Context context) {
+    public static String getLatLonApiKey() {
+        return GoogleMapsApiKeyGetter.getApiKey(App.getInstance(), gMapsLatLonKeyIdentifier);
+    }
+
+    private static String getApiKey(Context context, String keyIdentifier) {
         try {
             ApplicationInfo ai = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = ai.metaData;
-            return bundle.getString(key);
+            return bundle.getString(keyIdentifier);
         } catch(PackageManager.NameNotFoundException e) {
             Log.e("GoogleMapsApiKeyGetter", "Failed to load API KEY from meta-data");
             return EMPTY_STRING;

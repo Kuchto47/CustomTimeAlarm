@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class GoogleMapsApi {
 
-    private final static String GOOGLE_MAPS_API_ENDPOINT = "https://maps.googleapis.com/maps/api/directions/";
+    private final static String GOOGLE_MAPS_API_ENDPOINT = "https://maps.googleapis.com/maps/api/";
     private final GoogleMapsService mService;
 
     public GoogleMapsApi(){
