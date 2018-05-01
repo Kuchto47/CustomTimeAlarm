@@ -19,8 +19,10 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "destination")
     private String destination;
 
-    @ColumnInfo(name = "time_of_arrival")
-    private String timeOfArrival;
+    @ColumnInfo(name = "hour")
+    private int hour;
+    @ColumnInfo(name = "minute")
+    private int minute;
 
     @ColumnInfo(name = "traffic_model")
     @TrafficModel
@@ -36,14 +38,23 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "longitude")
     private double longitude;
 
-    public Alarm(String destination, String timeOfArrival, int trafficModel, int travelMode,
-                 double latitude, double longitude){
+    @ColumnInfo(name = "on")
+    private boolean on;
+
+    @ColumnInfo(name = "morning_routine")
+    private int morningRoutine;
+
+    public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
+                 double latitude, double longitude, boolean on, int morningRoutine){
         this.destination = destination;
-        this.timeOfArrival = timeOfArrival;
+        this.hour = hour;
+        this.minute = minute;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.on = on;
+        this.morningRoutine = morningRoutine;
     }
 
     public void setId(int id){
@@ -62,12 +73,24 @@ public class Alarm implements Serializable{
         this.destination = destination;
     }
 
-    public String getTimeOfArrival() {
-        return timeOfArrival;
+    public int getHour() {
+        return hour;
     }
 
-    public void setTimeOfArrival(String timeOfArrival) {
-        this.timeOfArrival = timeOfArrival;
+    public void setHour(int hour) {
+        this.hour = hour;
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
+
+    public String getTimeOfArrival(){
+        return hour + ":" + minute;
     }
 
     public int getTrafficModel() {
@@ -102,22 +125,46 @@ public class Alarm implements Serializable{
         this.longitude = longitude;
     }
 
+    public boolean isOn() {
+        return on;
+    }
+
+    public void setOn(boolean on) {
+        this.on = on;
+    }
+
+    public int getMorningRoutine() {
+        return morningRoutine;
+    }
+
+    public void setMorningRoutine(int morningRoutine) {
+        this.morningRoutine = morningRoutine;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || !(o instanceof Alarm)) return false;
         Alarm alarm = (Alarm) o;
         return Objects.equals(getDestination(), alarm.getDestination()) &&
-                Objects.equals(getTimeOfArrival(), alarm.getTimeOfArrival()) &&
+                getHour() == alarm.getHour() &&
+                getMinute() == alarm.getMinute() &&
                 getTrafficModel() == alarm.getTrafficModel() &&
                 getTravelMode() == alarm.getTravelMode() &&
                 getLatitude() == alarm.getLatitude() &&
-                getLongitude() == alarm.getLongitude();
+                getLongitude() == alarm.getLongitude() &&
+                isOn() == alarm.isOn() &&
+                getMorningRoutine() == alarm.getMorningRoutine();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDestination(), getTimeOfArrival(), getTrafficModel(),
-                getTravelMode(), getLatitude(), getLongitude());
+        return Objects.hash(getDestination(), getHour(), getMinute(), getTrafficModel(),
+                getTravelMode(), getLatitude(), getLongitude(), isOn(), getMorningRoutine());
+    }
+
+    @Override
+    public String toString() {
+        return this.getDestination()+" "+this.getHour()+ ":"+ this.getMinute()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }

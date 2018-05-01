@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.project.pv239.customtimealarm.R;
+import com.project.pv239.customtimealarm.views.CircularSeekBar;
 
 import java.util.Locale;
 

@@ -1,20 +1,19 @@
 package com.project.pv239.customtimealarm.activities;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.project.pv239.customtimealarm.api.DirectionsGetter;
+import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
-import com.project.pv239.customtimealarm.R;
 
 import java.util.List;
 
@@ -24,19 +23,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
-        //TODO test log
-        new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... voids) {
-                AlarmFacade alarmFacade = new AlarmFacade();
-                alarmFacade.addAlarm(new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,45,45));
-                List<Alarm> obts = alarmFacade.getAllAlarms();
-                for (Alarm obt : obts) {
-                    Log.d("== ALARM ==", obt.getDestination()+" "+obt.getTimeOfArrival()+" "+obt.getTrafficModel()+" "+obt.getTravelMode());
-                }
-                return null;
-            }
-        }.execute();
-
     }
 
     private void loadFragment(Bundle savedInstanceState) {
