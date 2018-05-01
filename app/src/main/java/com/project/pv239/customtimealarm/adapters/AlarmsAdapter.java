@@ -1,8 +1,10 @@
 package com.project.pv239.customtimealarm.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +12,11 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapFragment;
 import com.project.pv239.customtimealarm.R;
+import com.project.pv239.customtimealarm.database.DatabaseProvider;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
@@ -80,6 +84,13 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         }
     }
 
+    public void removeItem(int pos){
+        mAlarms.remove(pos);
+        notifyItemRemoved(pos);
+        notifyItemRangeChanged(pos, mAlarms.size());
+
+    }
+
     public static class UpdateAlarmTask extends AsyncTask<Void, Void, List<Alarm>>{
         private WeakReference<Alarm> mAlarm;
 
@@ -112,6 +123,49 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
                     mListener.onItemClicked(mAlarm);
                 }
             });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    showDeleteDialog(v.getContext());
+                    return true;
+                }
+            });
+        }
+
+        void showDeleteDialog(Context context){
+            new AlertDialog.Builder(context)
+                    .setTitle("Delete")
+                    .setMessage("Do you want to delete this alarm?")
+                    .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            new DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
+                            removeItem(getAdapterPosition());
+                            dialog.dismiss();
+                        }
+
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create()
+                    .show();
+        }
+    }
+
+    static class DeleteTaskAsync extends AsyncTask<Void,Void,Void>{
+
+        private WeakReference<Alarm> mAlarm;
+
+        DeleteTaskAsync(WeakReference<Alarm> a){
+            mAlarm = a;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            AlarmFacade alarmFacade = new AlarmFacade();
+            alarmFacade.deleteAlarm(mAlarm.get());
+            return null;
         }
     }
 }

@@ -34,8 +34,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
+import com.project.pv239.customtimealarm.api.GoogleMapsApi;
+import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
+import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.helpers.objects.Tuple;
+import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -88,26 +93,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
         if (mCreate) {
-            FloatingActionButton button = new FloatingActionButton(getContext());
-            button.setImageResource(R.drawable.ic_done_white_24dp);
-            FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
-            Resources r = getContext().getResources();
-            int dpMargin = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
-            p.setMargins(dpMargin, dpMargin, dpMargin, dpMargin);
-            mLayout.addView(button, p);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    destinationTextChanged(mDest);
-                    if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                        new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-                        closeFragment();
-                    } else {
-                        Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
+           addFloadingButton();
         }
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -189,16 +175,47 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         return view;
     }
 
-    public boolean destinationTextChanged(TextView v){
-        mAlarm.setDestination(v.getText().toString());
-        mAlarm.setLatitude(1);//so we can create alarm for testing
-        mMap.getMapAsync(new OnMapReadyCallback() {
+    public void addFloadingButton(){
+        FloatingActionButton button = new FloatingActionButton(getContext());
+        button.setImageResource(R.drawable.ic_done_white_24dp);
+        FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
+        Resources r = getContext().getResources();
+        int dpMargin = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
+        p.setMargins(dpMargin, dpMargin, dpMargin, dpMargin);
+        mLayout.addView(button, p);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onMapReady(GoogleMap googleMap) {
-                //TODO:update map according to query
+            public void onClick(View v) {
+                destinationTextChanged(mDest);
+                if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
+                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    closeFragment();
+                } else {
+                    Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
+                }
             }
         });
-        //TODO:query and handle (return false and do not update map) probably show toast and set latitude and longitude to 0s
+    }
+
+    public boolean destinationTextChanged(TextView v){
+        String text = v.getText().toString();
+        GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
+        Tuple<Double> t = gm.getLanLonOfPlace(PlacesProvider.getDestination(text));
+        if (t != null) {
+            mAlarm.setDestination(text);
+            final LatLng ll = new LatLng(t.getFirst(), t.getSecond());
+            mAlarm.setLatitude(ll.latitude);
+            mAlarm.setLongitude(ll.longitude);
+            mMap.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap googleMap) {
+                    googleMap.clear();
+                    googleMap.addMarker(new MarkerOptions().position(ll));
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
+                }
+            });
+        }
         return true;
     }
 
@@ -218,7 +235,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng pos = new LatLng(mAlarm.getLatitude(), mAlarm.getLongitude());
-        googleMap.addMarker(new MarkerOptions().position(pos));
+        if (mAlarm.getLatitude() != 0 || mAlarm.getLongitude() != 0) {
+            googleMap.addMarker(new MarkerOptions().position(pos));
+        }
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
     }
 
