@@ -45,11 +45,11 @@ public class MainActivity extends AppCompatActivity {
         }.execute();*/
         PermissionChecker.getLocationPermissionIfNotGranted(this);
         //TODO: tests below :)
-        Log.d("==TEST==", PlacesProvider.getOrigin());
+        /*Log.d("==TEST==", PlacesProvider.getOrigin());
         GoogleMapsApi g = new GoogleMapsApi();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
         Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525173860", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
-        Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));
+        Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));*/
     }
 
     @Override
