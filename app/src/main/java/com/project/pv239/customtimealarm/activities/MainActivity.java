@@ -23,6 +23,7 @@ import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
 import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
+import com.project.pv239.customtimealarm.services.WakeService;
 
 import java.util.List;
 

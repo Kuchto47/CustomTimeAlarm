@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!--allowBackup should be changed to true when DB wont be changing anymore -->
     <application
@@ -23,6 +24,20 @@
         </activity>
         <activity android:name=".activities.SettingsActivity">
         </activity>
+        <service android:name=".services.SchedulerService">
+
+        </service>
+        <receiver android:name=".services.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".services.PackageReplaceReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCHqgjw-K-ffk-m4eo78eWaag4YOSWGlAE"/>

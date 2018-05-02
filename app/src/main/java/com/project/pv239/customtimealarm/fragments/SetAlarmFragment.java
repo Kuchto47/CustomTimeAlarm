@@ -1,6 +1,7 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
 import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
+import com.project.pv239.customtimealarm.services.WakeService;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -224,6 +226,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)){
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+            Intent i = new Intent(getActivity(), WakeService.class);
+            i.putExtra("Alarm deleted",mAlarm.getId());
+            getContext().startService(i);
         }
     }
 
