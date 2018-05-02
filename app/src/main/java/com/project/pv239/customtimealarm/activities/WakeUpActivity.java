@@ -3,6 +3,7 @@ package com.project.pv239.customtimealarm.activities;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -21,6 +22,8 @@ import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 
 public class WakeUpActivity extends AppCompatActivity{
+
+    MediaPlayer mMp;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +45,12 @@ public class WakeUpActivity extends AppCompatActivity{
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
+        mMp = MediaPlayer.create(this, R.raw.alarm_clock);
+        mMp.start();
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mMp.stop();
                 Log.d("==SERVICE==", "clicked");
             }
         });

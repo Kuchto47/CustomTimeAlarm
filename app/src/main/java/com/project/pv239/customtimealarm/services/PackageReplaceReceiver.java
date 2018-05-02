@@ -9,7 +9,11 @@ public class PackageReplaceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        context.startService(new Intent(context,SchedulerService.class));
+        if (Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) {
+            Intent i = new Intent();
+            i.putExtra("type", SchedulerService.SCHEDULE_ALL);
+            SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,i);
+        }
         Log.d("==SERVICE==", "package_replace");
     }
 }

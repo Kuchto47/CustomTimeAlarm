@@ -52,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), WakeUpService.class);
         pIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
 
-        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() +
-                        2000, pIntent);
+        //am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2000, pIntent);
     }
 
     @Override
