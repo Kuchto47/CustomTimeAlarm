@@ -18,6 +18,7 @@ import android.util.Log;
 
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
 
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
@@ -52,16 +53,16 @@ public class SchedulerService extends JobIntentService {
             if (a.isOn()) {
                 Log.d("==SERVICE==", "alarm scheduled " +a.getId() );
                 AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(getApplicationContext(), WakeUpService.class);
-                intent.putExtra("type", SCHEDULED);
-                PendingIntent pIntent = PendingIntent.getService(getApplicationContext(), 155, intent, 0);
-                int estimatedTravelTime = 1;//TODO
+                int estimatedTravelTime = TravelTimeGetter.getEstimatedTravelTimeForAlarm(a);
                 Calendar date = new GregorianCalendar();
                 date.set(Calendar.HOUR_OF_DAY, a.getHour());
                 date.set(Calendar.MINUTE, a.getMinute());
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
                 long alarmTime = date.getTime().getTime() - estimatedTravelTime*60 - a.getMorningRoutine()*60*60;
+                Intent intent = new Intent(this, WakeUpService.class);
+                intent.putExtra("type", SCHEDULED);
+                PendingIntent pIntent = PendingIntent.getService(this, a.getId(), intent, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, /*alarmTime-RECHECK_DELTA*/ System.currentTimeMillis() +10000, pIntent);
                 }
