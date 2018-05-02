@@ -16,7 +16,7 @@ public class SchedulerService extends IntentService {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        Log.d("==SERVICE==","start_command " + intent.getExtras().getInt("Alarm deleted"));
+        Log.d("==SERVICE==","start_command ");
         return onStartCommand(intent,flags,startId);
     }
 

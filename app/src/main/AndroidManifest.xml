@@ -22,11 +22,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activities.SettingsActivity">
         </activity>
-        <service android:name=".services.SchedulerService">
 
+        <activity android:name=".activities.WakeUpActivity"
+            android:showOnLockScreen="true"
+            android:screenOrientation="sensorPortrait">
+        </activity>
+
+        <service android:name=".services.WakeUpService">
         </service>
+        <service android:name=".services.SchedulerService">
+        </service>
+
         <receiver android:name=".services.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
@@ -38,6 +47,7 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCHqgjw-K-ffk-m4eo78eWaag4YOSWGlAE"/>

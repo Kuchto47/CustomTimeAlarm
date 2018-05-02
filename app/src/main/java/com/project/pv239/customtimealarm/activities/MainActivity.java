@@ -1,31 +1,25 @@
 package com.project.pv239.customtimealarm.activities;
+
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.api.GoogleMapsApi;
-import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
-import com.project.pv239.customtimealarm.database.entity.Alarm;
-import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.enums.TrafficModel;
-import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
-import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
-import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
-import com.project.pv239.customtimealarm.services.WakeService;
-
-import java.util.List;
+import com.project.pv239.customtimealarm.services.WakeUpReceiver;
+import com.project.pv239.customtimealarm.services.WakeUpService;
 
 public class MainActivity extends AppCompatActivity {
     @Override

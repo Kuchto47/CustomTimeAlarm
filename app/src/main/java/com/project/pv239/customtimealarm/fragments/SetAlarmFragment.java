@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -34,25 +33,20 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
-import com.project.pv239.customtimealarm.api.GoogleMapsApi;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
-import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
 import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
-import com.project.pv239.customtimealarm.services.WakeService;
+import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 
-public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
+public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String ALARM_KEY = "alarm_key";
     private Alarm mAlarm;
@@ -95,7 +89,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
         if (mCreate) {
-           addFloadingButton();
+            addFloadingButton();
         }
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -177,7 +171,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         return view;
     }
 
-    public void addFloadingButton(){
+    public void addFloadingButton() {
         FloatingActionButton button = new FloatingActionButton(getContext());
         button.setImageResource(R.drawable.ic_done_white_24dp);
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
@@ -200,7 +194,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         });
     }
 
-    public boolean destinationTextChanged(TextView v){
+    public boolean destinationTextChanged(TextView v) {
         String text = v.getText().toString();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
         Tuple<Double> t = gm.getLanLonOfPlace(PlacesProvider.getDestination(text));
@@ -224,15 +218,15 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)){
+        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-            Intent i = new Intent(getActivity(), WakeService.class);
-            i.putExtra("Alarm deleted",mAlarm.getId());
+            Intent i = new Intent(getActivity(), SchedulerService.class);
+            i.putExtra("Alarm deleted", mAlarm.getId());
             getContext().startService(i);
         }
     }
 
-    public void closeFragment(){
+    public void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         getActivity().getSupportFragmentManager().popBackStack();
     }
@@ -246,11 +240,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
     }
 
-    static class UpdateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+    static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
 
-        UpdateAlarmInDbTask(WeakReference<Alarm> alarm){
+        UpdateAlarmInDbTask(WeakReference<Alarm> alarm) {
             mAlarm = alarm;
         }
 
@@ -262,11 +256,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         }
     }
 
-    static class CreateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+    static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
 
-        CreateAlarmInDbTask(WeakReference<Alarm> alarm){
+        CreateAlarmInDbTask(WeakReference<Alarm> alarm) {
             mAlarm = alarm;
         }
 
