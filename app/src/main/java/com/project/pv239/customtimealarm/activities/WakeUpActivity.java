@@ -3,6 +3,7 @@ package com.project.pv239.customtimealarm.activities;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,8 +24,8 @@ import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 
 public class WakeUpActivity extends AppCompatActivity{
 
-    MediaPlayer mMp;
-
+    private MediaPlayer mMediaPlayer;
+    //fragment cannot be shown over locked screen so we have to use only activity
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +34,6 @@ public class WakeUpActivity extends AppCompatActivity{
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().setFormat(PixelFormat.OPAQUE);
-        Button up = findViewById(R.id.im_am_up);
-        Button snooze = findViewById(R.id.snooze);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -45,20 +44,26 @@ public class WakeUpActivity extends AppCompatActivity{
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
-        mMp = MediaPlayer.create(this, R.raw.alarm_clock);
-        mMp.start();
+        mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
+        Button up = findViewById(R.id.im_am_up);
+        Button snooze = findViewById(R.id.snooze);
         up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMp.stop();
                 Log.d("==SERVICE==", "clicked");
+                mMediaPlayer.stop();
+            }
+        });
+        snooze.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("==SERVICE==", "clicked snooze");
+                mMediaPlayer.stop();
             }
         });
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 }

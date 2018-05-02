@@ -69,7 +69,6 @@ public class SchedulerService extends JobIntentService {
     static class GetAlarmsTask extends AsyncTask<Void,Void,List<Alarm>>{
 
         WeakReference<SchedulerService> mScheduler;
-
         GetAlarmsTask(WeakReference<SchedulerService> scheduler){
             mScheduler = scheduler;
         }

@@ -39,14 +39,9 @@
             android:exported="false">
         </service>
 
-        <receiver android:name=".services.BootReceiver">
+        <receiver android:name=".services.ScheduleReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".services.PackageReplaceReceiver">
-            <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
             </intent-filter>
         </receiver>

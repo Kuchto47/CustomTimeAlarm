@@ -220,9 +220,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-            Intent i = new Intent(getActivity(), SchedulerService.class);
-            i.putExtra("Alarm deleted", mAlarm.getId());
-            getContext().startService(i);
         }
     }
 

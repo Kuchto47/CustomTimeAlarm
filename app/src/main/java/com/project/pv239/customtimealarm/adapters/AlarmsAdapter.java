@@ -85,7 +85,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         }
     }
 
-    void removeItem(int pos){
+    private void removeItem(int pos){
         mAlarms.remove(pos);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, mAlarms.size());
