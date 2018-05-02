@@ -1,18 +1,24 @@
 package com.project.pv239.customtimealarm.activities;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
+import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 
 public class WakeUpActivity extends AppCompatActivity{
 
@@ -20,28 +26,28 @@ public class WakeUpActivity extends AppCompatActivity{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wake_up_layout);
-        loadFragment(savedInstanceState);
 
-        setShowWhenLocked(true);
-        setTurnScreenOn(true);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR|
-                WindowManager.LayoutParams.FLAG_FULLSCREEN  |
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
-    }
-
-    private void loadFragment(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            if (fragmentManager != null) {
-                fragmentManager.beginTransaction()
-                        .replace(android.R.id.content,
-                                MainFragment.newInstance(),
-                                MainFragment.class.getSimpleName())
-                        .commit();
-            }
+        getWindow().setFormat(PixelFormat.OPAQUE);
+        Button b = findViewById(R.id.button);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setShowWhenLocked(true);
+            setTurnScreenOn(true);
+            KeyguardManager m = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+            m.requestDismissKeyguard(this, null);
         }
+        else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("==SERVICE==", "clicked");
+            }
+        });
+
     }
 
     @Override

@@ -46,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
         Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525173860", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
         Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));*/
+        PendingIntent pIntent;
+
+        AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getApplicationContext(), WakeUpService.class);
+        pIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+
+        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() +
+                        1000, pIntent);
     }
 
     @Override

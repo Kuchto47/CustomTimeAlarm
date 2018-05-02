@@ -76,17 +76,6 @@ public class MainFragment extends Fragment{
             }
         });
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
-
-        PendingIntent pIntent;
-
-        AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getContext(), WakeUpService.class);
-        pIntent = PendingIntent.getService(getContext(), 0, intent, 0);
-
-        am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() +
-                        1000, pIntent);
-
         return view;
     }
 
