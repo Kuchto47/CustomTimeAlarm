@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -53,7 +54,7 @@ public class SchedulerService extends JobIntentService {
                 AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(getApplicationContext(), WakeUpService.class);
                 intent.putExtra("type", SCHEDULED);
-                PendingIntent pIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
+                PendingIntent pIntent = PendingIntent.getService(getApplicationContext(), 155, intent, 0);
                 int estimatedTravelTime = 1;//TODO
                 Calendar date = new GregorianCalendar();
                 date.set(Calendar.HOUR_OF_DAY, a.getHour());
@@ -61,7 +62,12 @@ public class SchedulerService extends JobIntentService {
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
                 long alarmTime = date.getTime().getTime() - estimatedTravelTime*60 - a.getMorningRoutine()*60*60;
-                am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, /*alarmTime-RECHECK_DELTA*/ SystemClock.elapsedRealtime() +10000, pIntent);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, /*alarmTime-RECHECK_DELTA*/ System.currentTimeMillis() +10000, pIntent);
+                }
+                else {
+                    am.setExact(AlarmManager.RTC_WAKEUP, /*alarmTime-RECHECK_DELTA*/ System.currentTimeMillis() +10000, pIntent);
+                }
             }
         }
     }

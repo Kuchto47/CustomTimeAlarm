@@ -45,7 +45,7 @@ public class WakeUpActivity extends AppCompatActivity{
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
         mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
+        //mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
         Button up = findViewById(R.id.im_am_up);
