@@ -102,7 +102,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
             alarmFacade.updateAlarm(mAlarm.get());
-            return alarmFacade.getAllAlarms();
+            return null;
         }
     }
 

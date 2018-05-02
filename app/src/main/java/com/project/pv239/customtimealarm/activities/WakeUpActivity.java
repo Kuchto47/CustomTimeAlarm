@@ -30,7 +30,8 @@ public class WakeUpActivity extends AppCompatActivity{
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().setFormat(PixelFormat.OPAQUE);
-        Button b = findViewById(R.id.button);
+        Button up = findViewById(R.id.im_am_up);
+        Button snooze = findViewById(R.id.snooze);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
@@ -41,7 +42,7 @@ public class WakeUpActivity extends AppCompatActivity{
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
-        b.setOnClickListener(new View.OnClickListener() {
+        up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("==SERVICE==", "clicked");
