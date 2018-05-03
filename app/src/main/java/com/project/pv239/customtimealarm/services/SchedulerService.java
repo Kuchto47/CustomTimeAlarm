@@ -60,9 +60,9 @@ public class SchedulerService extends JobIntentService {
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
                 long alarmTime = date.getTime().getTime() - estimatedTravelTime*60 - a.getMorningRoutine()*60*60;
-                Intent intent = new Intent(this, WakeUpService.class);
+                Intent intent = new Intent(this, WakeUpReceiver.class);
                 intent.putExtra("type", SCHEDULED);
-                PendingIntent pIntent = PendingIntent.getService(this, a.getId(), intent, 0);
+                PendingIntent pIntent = PendingIntent.getBroadcast(this, a.getId(), intent, 0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, /*alarmTime-RECHECK_DELTA*/ System.currentTimeMillis() +10000, pIntent);
                 }
