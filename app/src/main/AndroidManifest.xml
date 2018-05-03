@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!--allowBackup should be changed to true when DB wont be changing anymore -->
+    <!--allowBackup should be changed to true when DB wont be changing anymore-->
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -61,6 +61,4 @@
             android:name="lat.lon.API_KEY"
             android:value="AIzaSyD0nzeYV47k_EHuWgcMDnKaLu0ZuOdDKtg"/>
     </application>
-
-
 </manifest>
