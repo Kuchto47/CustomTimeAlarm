@@ -53,13 +53,15 @@ public class SchedulerService extends JobIntentService {
             if (a.isOn()) {
                 Log.d("==SERVICE==", "alarm scheduled " +a.getId() );
                 AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                //estimatedTravelTime in secs
                 int estimatedTravelTime = TravelTimeGetter.getEstimatedTravelTimeForAlarm(a);
                 Calendar date = new GregorianCalendar();
                 date.set(Calendar.HOUR_OF_DAY, a.getHour());
                 date.set(Calendar.MINUTE, a.getMinute());
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
-                long alarmTime = date.getTime().getTime() - estimatedTravelTime*60 - a.getMorningRoutine()*60*60;
+                //alarmTime in ms
+                long alarmTime = date.getTime().getTime() - estimatedTravelTime*1000 - a.getMorningRoutine()*60*1000;
                 Intent intent = new Intent(this, WakeUpReceiver.class);
                 intent.putExtra("type", SCHEDULED);
                 PendingIntent pIntent = PendingIntent.getBroadcast(this, a.getId(), intent, 0);

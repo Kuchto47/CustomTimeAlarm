@@ -197,7 +197,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public boolean destinationTextChanged(TextView v) {
         String text = v.getText().toString();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-        Tuple<Double> t = gm.getLanLonOfPlace(PlacesProvider.getDestination(text));
+        Tuple<Double> t = gm.getLanLonOfPlace(text);
         if (t != null) {
             mAlarm.setDestination(text);
             final LatLng ll = new LatLng(t.getFirst(), t.getSecond());

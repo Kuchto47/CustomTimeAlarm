@@ -27,15 +27,6 @@ public class PlacesProvider {
         }
     }
 
-    public static String getDestination(String dest) {
-        return PlacesProvider.getQueryPlaceString(dest);
-    }
-
-    private static String getQueryPlaceString(String place) {
-        String[] separatedPlace = place.split(" ");
-        return TextUtils.join("+", separatedPlace);
-    }
-
     private static class getLocationOfDeviceTask extends AsyncTask<Void, Void, String> {
         private LocationManager mLocationManager;
 

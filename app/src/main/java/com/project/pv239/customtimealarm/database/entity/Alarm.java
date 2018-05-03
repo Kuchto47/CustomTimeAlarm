@@ -21,9 +21,10 @@ public class Alarm implements Serializable{
     private String destination;
 
     @ColumnInfo(name = "hour")
-    private int hour;
+    private int hourOfArrival;
+
     @ColumnInfo(name = "minute")
-    private int minute;
+    private int minuteOfHourOfArrival;
 
     @ColumnInfo(name = "traffic_model")
     @TrafficModel
@@ -48,8 +49,8 @@ public class Alarm implements Serializable{
     public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
                  double latitude, double longitude, boolean on, int morningRoutine){
         this.destination = destination;
-        this.hour = hour;
-        this.minute = minute;
+        this.hourOfArrival = hour;
+        this.minuteOfHourOfArrival = minute;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
         this.latitude = latitude;
@@ -75,23 +76,23 @@ public class Alarm implements Serializable{
     }
 
     public int getHour() {
-        return hour;
+        return hourOfArrival;
     }
 
     public void setHour(int hour) {
-        this.hour = hour;
+        this.hourOfArrival = hour;
     }
 
     public int getMinute() {
-        return minute;
+        return minuteOfHourOfArrival;
     }
 
     public void setMinute(int minute) {
-        this.minute = minute;
+        this.minuteOfHourOfArrival = minute;
     }
 
     public String getTimeOfArrival(){
-        return String.format(Locale.getDefault(),"%02d:%02d", hour, minute);
+        return String.format(Locale.getDefault(),"%02d:%02d", hourOfArrival, minuteOfHourOfArrival);
     }
 
     public int getTrafficModel() {
