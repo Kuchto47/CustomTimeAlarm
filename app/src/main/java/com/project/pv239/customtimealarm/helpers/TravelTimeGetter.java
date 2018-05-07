@@ -4,11 +4,14 @@ import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.api.model.directions.Leg;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 
-import java.util.Calendar;
-
 public class TravelTimeGetter {
     private static final long UNDEFINED_DEPARTURE_TIME = -1;
 
+    /**
+     * Retrieves travelling time for given alarm
+     * @param alarm alarm for which calculation is taking place
+     * @return travel time in seconds
+     */
     public static int getEstimatedTravelTimeForAlarm(Alarm alarm){
         GoogleMapsApiInformationGetter api = new GoogleMapsApiInformationGetter();
         int initialTravelTime = TravelTimeGetter.firstCall(api, alarm);

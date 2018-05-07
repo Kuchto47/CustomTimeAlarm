@@ -15,14 +15,14 @@ public class TimeHelper {
         return requestedTimeInSeconds + (isTimeTomorrow ? 24*60*60 : 0);
     }
 
-    public static boolean isTimeTomorrow(int wakeUpHour, int wakeUpMinute) {
+    private static boolean isTimeTomorrow(int wakeUpHour, int wakeUpMinute) {
         Calendar actualTime = TimeHelper.getActualTime();
         int actualHour = actualTime.get(Calendar.HOUR_OF_DAY);
         int actualMinute = actualTime.get(Calendar.MINUTE);
         return actualHour > wakeUpHour || (actualHour == wakeUpHour && actualMinute > wakeUpMinute);
     }
 
-    public static Calendar getActualTime() {
+    private static Calendar getActualTime() {
         return Calendar.getInstance();
     }
 }
