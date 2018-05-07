@@ -1,7 +1,6 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -37,8 +36,6 @@ import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
-import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
-import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
 
@@ -110,11 +107,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                 final TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        mAlarm.setHour(hourOfDay);
-                        mAlarm.setMinute(minute);
+                        mAlarm.setHourOfArrival(hourOfDay);
+                        mAlarm.setMinuteOfHourOfArrival(minute);
                     }
                 };
-                new TimePickerDialog(getContext(), listener, mAlarm.getHour(), mAlarm.getMinute(), true).show();
+                new TimePickerDialog(getContext(), listener, mAlarm.getHourOfArrival(), mAlarm.getMinuteOfHourOfArrival(), true).show();
             }
         });
         final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(),

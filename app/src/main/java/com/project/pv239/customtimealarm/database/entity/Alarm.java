@@ -3,14 +3,13 @@ package com.project.pv239.customtimealarm.database.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.Nullable;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
-import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
 import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -46,9 +45,12 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "on")
     private boolean on;
 
-    //should be in seconds
     @ColumnInfo(name = "morning_routine")
     private int morningRoutine;
+
+    public Alarm() {
+        this("", 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, false, 0);
+    }
 
     public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
                  double latitude, double longitude, boolean on, int morningRoutine){
@@ -79,19 +81,19 @@ public class Alarm implements Serializable{
         this.destination = destination;
     }
 
-    public int getHour() {
+    public int getHourOfArrival() {
         return hourOfArrival;
     }
 
-    public void setHour(int hour) {
+    public void setHourOfArrival(int hour) {
         this.hourOfArrival = hour;
     }
 
-    public int getMinute() {
+    public int getMinuteOfHourOfArrival() {
         return minuteOfHourOfArrival;
     }
 
-    public void setMinute(int minute) {
+    public void setMinuteOfHourOfArrival(int minute) {
         this.minuteOfHourOfArrival = minute;
     }
 
@@ -163,8 +165,8 @@ public class Alarm implements Serializable{
         if (o == null || !(o instanceof Alarm)) return false;
         Alarm alarm = (Alarm) o;
         return Objects.equals(getDestination(), alarm.getDestination()) &&
-                getHour() == alarm.getHour() &&
-                getMinute() == alarm.getMinute() &&
+                getHourOfArrival() == alarm.getHourOfArrival() &&
+                getMinuteOfHourOfArrival() == alarm.getMinuteOfHourOfArrival() &&
                 getTrafficModel() == alarm.getTrafficModel() &&
                 getTravelMode() == alarm.getTravelMode() &&
                 getLatitude() == alarm.getLatitude() &&
@@ -175,12 +177,12 @@ public class Alarm implements Serializable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDestination(), getHour(), getMinute(), getTrafficModel(),
+        return Objects.hash(getDestination(), getHourOfArrival(), getMinuteOfHourOfArrival(), getTrafficModel(),
                 getTravelMode(), getLatitude(), getLongitude(), isOn(), getMorningRoutine());
     }
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getHour()+ ":"+ this.getMinute()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
+        return this.getDestination()+" "+this.getHourOfArrival()+ ":"+ this.getMinuteOfHourOfArrival()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }
