@@ -1,7 +1,5 @@
 package com.project.pv239.customtimealarm.helpers.time;
 
-import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
-
 import java.util.Calendar;
 
 public class TimeHelper {
