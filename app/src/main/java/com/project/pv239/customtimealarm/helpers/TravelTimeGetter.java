@@ -16,8 +16,9 @@ public class TravelTimeGetter {
         GoogleMapsApiInformationGetter api = new GoogleMapsApiInformationGetter();
         int initialTravelTime = TravelTimeGetter.firstCall(api, alarm);
         int approximatedTravelTime = TravelTimeGetter.secondCall(api, alarm, initialTravelTime);
-        boolean isThirdCallNeeded = TravelTimeGetter.isThirdCallNeeded(initialTravelTime, approximatedTravelTime, alarm);
-        return isThirdCallNeeded ? TravelTimeGetter.thirdCall(api, alarm, approximatedTravelTime) : approximatedTravelTime;
+        //boolean isThirdCallNeeded = TravelTimeGetter.isThirdCallNeeded(initialTravelTime, approximatedTravelTime, alarm);
+        //return isThirdCallNeeded ? TravelTimeGetter.thirdCall(api, alarm, approximatedTravelTime) : approximatedTravelTime;
+        return approximatedTravelTime;
     }
 
     private static int firstCall(GoogleMapsApiInformationGetter api, Alarm alarm) {
@@ -32,12 +33,13 @@ public class TravelTimeGetter {
     }
 
     private static boolean isThirdCallNeeded(int initialTravelTime, int approximatedTravelTime, Alarm alarm) {
+        //TODO improve logic here so it amkes sense to use it.
         long initTravelTime = (long)initialTravelTime;
         long travelTime = (long)approximatedTravelTime;
         long arrivalTime = alarm.getTimeOfArrivalInSeconds();
         long oldDepartureTime = arrivalTime-initTravelTime;
         long newDepartureTime = arrivalTime-travelTime;
-        //Ak je rozdiel vacsi ako 2 a pol minuty tak to uz povazuje kod za velky rozdiel a este to upresni
+        //Ak je rozdiel vacsi ako minuta tak to uz povazuje kod za velky rozdiel a este to upresni
         return newDepartureTime-oldDepartureTime > 60 || newDepartureTime-oldDepartureTime < -60;
     }
 
