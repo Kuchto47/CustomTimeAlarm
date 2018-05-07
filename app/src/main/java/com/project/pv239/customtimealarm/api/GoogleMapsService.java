@@ -8,11 +8,12 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface GoogleMapsService {
-    @GET("directions/json?alternatives=false&departure_time=now")
+    @GET("directions/json?alternatives=false")
     Call<DirectionsResponse> getDirections(
             @Query("origin") String origin,
             @Query("destination") String destination,
             @Query("mode") String mode,
+            @Query("departure_time") String departureTime,
             @Query("arrival_time") String time_of_arrival,
             @Query("traffic_model") String model,
             @Query("key") String api_key

@@ -6,8 +6,10 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
+import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -43,6 +45,7 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "on")
     private boolean on;
 
+    //should be in seconds
     @ColumnInfo(name = "morning_routine")
     private int morningRoutine;
 
@@ -95,6 +98,10 @@ public class Alarm implements Serializable{
         return String.format(Locale.getDefault(),"%02d:%02d", hourOfArrival, minuteOfHourOfArrival);
     }
 
+    public long getTimeOfArrivalInSeconds() {
+        return TravelTimeGetter.getTimeInSeconds(hourOfArrival, minuteOfHourOfArrival);
+    }
+
     public int getTrafficModel() {
         return trafficModel;
     }
@@ -135,10 +142,16 @@ public class Alarm implements Serializable{
         this.on = on;
     }
 
+    /**
+     * @return number of seconds for morning routine
+     */
     public int getMorningRoutine() {
         return morningRoutine;
     }
 
+    /**
+     * @param morningRoutine number of seconds for morning routine
+     */
     public void setMorningRoutine(int morningRoutine) {
         this.morningRoutine = morningRoutine;
     }

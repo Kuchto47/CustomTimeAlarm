@@ -1,29 +1,20 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
-import android.app.IntentService;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.IBinder;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.AlarmManagerCompat;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
+import com.project.pv239.customtimealarm.helpers.AlarmTimeGetter;
 
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class SchedulerService extends JobIntentService {
@@ -53,15 +44,7 @@ public class SchedulerService extends JobIntentService {
             if (a.isOn()) {
                 Log.d("==SERVICE==", "alarm scheduled " +a.getId() );
                 AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                //estimatedTravelTime in secs
-                int estimatedTravelTime = TravelTimeGetter.getEstimatedTravelTimeForAlarm(a);
-                Calendar date = new GregorianCalendar();
-                date.set(Calendar.HOUR_OF_DAY, a.getHour());
-                date.set(Calendar.MINUTE, a.getMinute());
-                date.set(Calendar.SECOND, 0);
-                date.set(Calendar.MILLISECOND, 0);
-                //alarmTime in ms
-                long alarmTime = date.getTime().getTime() - estimatedTravelTime*1000 - a.getMorningRoutine()*60*1000;
+                long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(a);
                 Intent intent = new Intent(this, WakeUpReceiver.class);
                 intent.putExtra("type", SCHEDULED);
                 PendingIntent pIntent = PendingIntent.getBroadcast(this, a.getId(), intent, 0);
