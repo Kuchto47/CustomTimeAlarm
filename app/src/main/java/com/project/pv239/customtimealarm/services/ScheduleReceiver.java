@@ -11,7 +11,7 @@ public class ScheduleReceiver extends BroadcastReceiver{
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) ||
                 Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) {
             Intent i = new Intent();
-            i.putExtra("type", SchedulerService.SCHEDULE_ALL);
+            i.putExtra(SchedulerService.INTENT_KEY, SchedulerService.SCHEDULE_ALL);
             SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,i);
         }
         else {
