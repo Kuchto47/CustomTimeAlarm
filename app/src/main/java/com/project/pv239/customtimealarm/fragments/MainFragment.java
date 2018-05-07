@@ -1,12 +1,7 @@
 package com.project.pv239.customtimealarm.fragments;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -23,7 +18,6 @@ import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.services.WakeUpService;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

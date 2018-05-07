@@ -1,13 +1,9 @@
 package com.project.pv239.customtimealarm.activities;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -18,7 +14,6 @@ import android.view.MenuItem;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
-import com.project.pv239.customtimealarm.services.WakeUpService;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -45,13 +40,6 @@ public class MainActivity extends AppCompatActivity {
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
         Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525173860", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
         Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));*/
-        PendingIntent pIntent;
-
-        AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(getApplicationContext(), WakeUpService.class);
-        pIntent = PendingIntent.getService(getApplicationContext(), 0, intent, 0);
-
-        //am.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 2000, pIntent);
     }
 
     @Override

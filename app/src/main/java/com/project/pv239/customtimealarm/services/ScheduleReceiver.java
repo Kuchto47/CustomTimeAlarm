@@ -14,6 +14,9 @@ public class ScheduleReceiver extends BroadcastReceiver{
             i.putExtra("type", SchedulerService.SCHEDULE_ALL);
             SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,i);
         }
+        else {
+            SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,intent);
+        }
         Log.d("==SERVICE==", "reschedule");
     }
 }
