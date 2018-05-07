@@ -7,6 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
 import com.project.pv239.customtimealarm.helpers.TravelTimeGetter;
+import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -99,7 +100,7 @@ public class Alarm implements Serializable{
     }
 
     public long getTimeOfArrivalInSeconds() {
-        return TravelTimeGetter.getTimeInSeconds(hourOfArrival, minuteOfHourOfArrival);
+        return TimeHelper.getTimeInSeconds(hourOfArrival, minuteOfHourOfArrival);
     }
 
     public int getTrafficModel() {
