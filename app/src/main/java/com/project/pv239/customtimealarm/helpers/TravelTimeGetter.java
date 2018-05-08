@@ -1,8 +1,11 @@
 package com.project.pv239.customtimealarm.helpers;
 
+import android.util.Log;
+
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.api.model.directions.Leg;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
+
 
 public class TravelTimeGetter {
     private static final long UNDEFINED_DEPARTURE_TIME = -1;
@@ -22,6 +25,7 @@ public class TravelTimeGetter {
     }
 
     private static int firstCall(GoogleMapsApiInformationGetter api, Alarm alarm) {
+        Log.d("==FIRSTCALL==", "values: "+UNDEFINED_DEPARTURE_TIME+" alarm: "+alarm.toString());
         return TravelTimeGetter.callApi(api, alarm, UNDEFINED_DEPARTURE_TIME).duration.value;
     }
 

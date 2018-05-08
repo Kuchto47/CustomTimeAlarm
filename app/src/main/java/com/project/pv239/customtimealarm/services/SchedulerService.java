@@ -93,22 +93,25 @@ public class SchedulerService extends JobIntentService {
 
     public void scheduleAlarm(Alarm alarm){
         if (alarm.isOn()) {
-            Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
+            Log.d("==SERVICE==", "alarm scheduling " + alarm.toString());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
-            Log.d("==SERVICE==", ""+ System.currentTimeMillis() + "  " + alarmTime);
+            Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + "  " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
             if (timeToAlarm > HOUR) {
+                Log.d("==SERVICE==", "TIME TO ALARM MORE THAN 1 HOUR");
                 intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                 intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
                 setAlarmManager(alarm.getId(), intent, alarmTime - HOUR);
             }
             if (timeToAlarm <= HOUR && timeToAlarm > TEN_MINUTES) {
+                Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 1 HOUR");
                 intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                 intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
                 setAlarmManager(alarm.getId(), intent, alarmTime - TEN_MINUTES);
             }
             if (timeToAlarm <= TEN_MINUTES) {
+                Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 10 MINS");
                 intent.putExtra(INTENT_TYPE_KEY, WAKE_UP);
                 intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
                 setAlarmManager(alarm.getId(), intent, alarmTime);
@@ -124,6 +127,7 @@ public class SchedulerService extends JobIntentService {
                         getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, 0);
                 ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
             }
+            Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
         }
         else {
 
