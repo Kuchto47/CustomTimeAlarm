@@ -107,6 +107,10 @@ public class SchedulerService extends JobIntentService {
             Log.d("==SERVICE==", "alarm scheduling " + alarm.getId());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
             Log.d("==SERVICE==", "TIMES " + System.currentTimeMillis() + " " + alarmTime);
+            if(alarmTime == -1){
+                Log.d("==ALARMTIME==", "equal to -1, we should probably set default wakeuptime here.");
+            }
+            Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + " " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
             if (timeToAlarm <= TEN_MINUTES) {

@@ -6,7 +6,11 @@ import java.util.GregorianCalendar;
 
 public class AlarmTimeGetter {
     public static long getAlarmTimeInMilliSeconds(Alarm alarm) {
-        long travelTimeInMS = (long)TravelTimeGetter.getEstimatedTravelTimeForAlarm(alarm)*1000;
+        int travelTimeOnSeconds = TravelTimeGetter.getEstimatedTravelTimeForAlarm(alarm);
+        if(travelTimeOnSeconds == -1) {
+            return -1;
+        }
+        long travelTimeInMS = (long)travelTimeOnSeconds*1000;
         long morningRoutineInMS = (long)alarm.getMorningRoutine()*60*1000;
         long arrivalTimeInMS = alarm.getTimeOfArrivalInSeconds()*1000;
         return arrivalTimeInMS-travelTimeInMS-morningRoutineInMS;
