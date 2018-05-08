@@ -33,8 +33,8 @@ public class SchedulerService extends JobIntentService {
     public static final String INTENT_TYPE_KEY = "type";
     public static final String INTENT_SERIALIZABLE_KEY = "alarm_object";
     public static final String INTENT_ALARM_ID_KEY = "alarm_id";
-    private static final int TEN_MINUTES = 1000*60*10;
-    private static final int HOUR = 1000*60*60;
+    private static final int TEN_MINUTES = 1000*10;//60*10;
+    private static final int HOUR = 1000*60;//*60;
     private static final int NOTIFICATION_ID = 100000;
 
     @Override
@@ -95,7 +95,8 @@ public class SchedulerService extends JobIntentService {
         if (alarm.isOn()) {
             Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
-            long timeToAlarm = alarmTime - alarm.getMorningRoutine() - System.currentTimeMillis();
+            Log.d("==SERVICE==", ""+ System.currentTimeMillis() + "  " + alarmTime);
+            long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
             if (timeToAlarm > HOUR) {
                 intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
@@ -113,10 +114,15 @@ public class SchedulerService extends JobIntentService {
                 setAlarmManager(alarm.getId(), intent, alarmTime);
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int bedtimeMilis = prefs.getInt("sleep_time", 480)*60*1000;
-            if (timeToAlarm > bedtimeMilis){
+            int bedtimeMillis = prefs.getInt("sleep_time", 480)*60*1000;
+            if (timeToAlarm > bedtimeMillis){
                 intent.putExtra(INTENT_TYPE_KEY, BEDTIME_NOTIFICATION);
-                setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMilis);
+                setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMillis);
+            }
+            else {//cancel notification
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                        getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, 0);
+                ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
             }
         }
         else {

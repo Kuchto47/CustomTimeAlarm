@@ -2,6 +2,8 @@ package com.project.pv239.customtimealarm.helpers;
 
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 
+import java.util.GregorianCalendar;
+
 public class AlarmTimeGetter {
     public static long getAlarmTimeInMilliSeconds(Alarm alarm) {
         return 10;
