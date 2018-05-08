@@ -99,7 +99,7 @@ public class SchedulerService extends JobIntentService {
         if (alarm.isOn()) {
             Log.d("==SERVICE==", "alarm scheduling " + alarm.toString());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
-            Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + "  " + alarmTime);
+            Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + " " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
             if (timeToAlarm > HOUR) {

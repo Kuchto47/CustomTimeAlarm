@@ -18,22 +18,35 @@ public class TravelTimeGetter {
     public static int getEstimatedTravelTimeForAlarm(Alarm alarm){
         GoogleMapsApiInformationGetter api = new GoogleMapsApiInformationGetter();
         int initialTravelTime = TravelTimeGetter.firstCall(api, alarm);
-        int approximatedTravelTime = TravelTimeGetter.secondCall(api, alarm, initialTravelTime);
-        //boolean isThirdCallNeeded = TravelTimeGetter.isThirdCallNeeded(initialTravelTime, approximatedTravelTime, alarm);
-        //return isThirdCallNeeded ? TravelTimeGetter.thirdCall(api, alarm, approximatedTravelTime) : approximatedTravelTime;
-        return approximatedTravelTime;
+        if(initialTravelTime != -1) {
+            int approximatedTravelTime = TravelTimeGetter.secondCall(api, alarm, initialTravelTime);
+            if(approximatedTravelTime != -1) {
+                //boolean isThirdCallNeeded = TravelTimeGetter.isThirdCallNeeded(initialTravelTime, approximatedTravelTime, alarm);
+                //return isThirdCallNeeded ? TravelTimeGetter.thirdCall(api, alarm, approximatedTravelTime) : approximatedTravelTime;
+                return approximatedTravelTime;
+            }
+        }
+        return initialTravelTime;
     }
 
     private static int firstCall(GoogleMapsApiInformationGetter api, Alarm alarm) {
         Log.d("==FIRSTCALL==", "values: "+UNDEFINED_DEPARTURE_TIME+" alarm: "+alarm.toString());
-        return TravelTimeGetter.callApi(api, alarm, UNDEFINED_DEPARTURE_TIME).duration.value;
+        Leg response = TravelTimeGetter.callApi(api, alarm, UNDEFINED_DEPARTURE_TIME);
+        if(response != null){
+            return response.duration.value;
+        }
+        return -1;
     }
 
     private static int secondCall(GoogleMapsApiInformationGetter api, Alarm alarm, int initialTravelTime) {
         long requestedArrivalTime = alarm.getTimeOfArrivalInSeconds();
         long travelTime = (long)initialTravelTime;
         long departureTime = requestedArrivalTime-travelTime;
-        return TravelTimeGetter.callApi(api, alarm, departureTime).duration_in_traffic.value;
+        Leg response = TravelTimeGetter.callApi(api, alarm, departureTime);
+        if(response != null) {
+            return response.duration_in_traffic.value;
+        }
+        return -1;
     }
 
     private static boolean isThirdCallNeeded(int initialTravelTime, int approximatedTravelTime, Alarm alarm) {
