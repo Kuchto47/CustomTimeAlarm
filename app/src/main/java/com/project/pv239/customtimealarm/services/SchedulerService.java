@@ -1,6 +1,7 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.activities.WakeUpActivity;
@@ -69,12 +71,16 @@ public class SchedulerService extends JobIntentService {
     }
 
     public void createNotification() {
-        /*NotificationCompat.Builder mBuilder =
+        /*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
+        if(shouldShowNotification){
+            NotificationCompat.Builder mBuilder =
             new NotificationCompat.Builder(getApplicationContext())
                     .setContentTitle("My notification")
                     .setContentText("Hello World!");
-        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1, mBuilder.build());*/
+            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(1, mBuilder.build());
+        }*/
     }
 
     public void cancelAlarm(int id){
