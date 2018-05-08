@@ -186,7 +186,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
                     Intent intent = new Intent();
-                    intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mAlarm);
+                    intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
                     intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
                     SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
                     new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
@@ -224,7 +224,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
             Intent intent = new Intent();
-            intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mAlarm);
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
             SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();

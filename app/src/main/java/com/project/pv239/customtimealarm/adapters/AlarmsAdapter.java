@@ -84,7 +84,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHolder.mAlarm.setOn(isChecked);
             Intent intent = new Intent();
-            intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mHolder.mAlarm);
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mHolder.mAlarm.getId());
             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
             SchedulerService.enqueueWork(mContext, SchedulerService.class, SchedulerService.JOB_ID, intent);
             (new UpdateAlarmTask(new WeakReference<>(mHolder.mAlarm))).execute();
@@ -148,7 +148,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
                             new DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
                             removeItem(getAdapterPosition());
                             Intent intent = new Intent();
-                            intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mAlarm);
+                            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
                             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
                             SchedulerService.enqueueWork(context, SchedulerService.class, SchedulerService.JOB_ID, intent);
                             dialog.dismiss();

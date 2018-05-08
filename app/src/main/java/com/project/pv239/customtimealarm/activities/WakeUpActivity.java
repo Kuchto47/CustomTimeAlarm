@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -27,6 +28,7 @@ import android.widget.Toast;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
+import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.fragments.SetAlarmFragment;
 import com.project.pv239.customtimealarm.fragments.SettingsFragment;
@@ -34,6 +36,8 @@ import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class WakeUpActivity extends AppCompatActivity{
 
@@ -68,39 +72,55 @@ public class WakeUpActivity extends AppCompatActivity{
         mMediaPlayer.start();
         Button up = findViewById(R.id.im_am_up);
         Button snooze = findViewById(R.id.snooze);
+        int alarmId = getIntent().getIntExtra(SchedulerService.INTENT_ALARM_ID_KEY, -1);
+        List<Alarm> list = null;
+        try {
+            list = new GetAlarms().execute().get();
+        }catch (InterruptedException|ExecutionException e){
+            e.printStackTrace();
+        }
+        if (list != null)
+            for(Alarm a : list) {
+                if (a.getId() == alarmId) {
+                    final Alarm alarm = a;
+                    up.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            alarm.setOn(false);
+                            new SetAlarmFragment.UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
+                            mMediaPlayer.stop();
+                            finish();
+                        }
+                    });
 
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Alarm alarm = (Alarm)getIntent().getSerializableExtra(SchedulerService.INTENT_SERIALIZABLE_KEY);
-                alarm.setOn(false);
-                new SetAlarmFragment.UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
-                mMediaPlayer.stop();
-                finish();
-            }
-        });
-
-        snooze.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Alarm alarm = (Alarm)getIntent().getSerializableExtra(SchedulerService.INTENT_SERIALIZABLE_KEY);
-                Intent intent = new Intent(getApplicationContext(), ScheduleReceiver.class);
-                intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.WAKE_UP);
-                intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY,alarm);
-                PendingIntent pIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(), intent, 0);
-                AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                    snooze.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+                            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.WAKE_UP);
+                            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, alarm.getId());
+                            PendingIntent pIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                            }
+                            else {
+                                am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                            }
+                            mMediaPlayer.stop();
+                            finish();
+                        }
+                    });
                 }
-                else {
-                    am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
-                }
-                mMediaPlayer.stop();
-                finish();
             }
-        });
+    }
+    static class GetAlarms extends AsyncTask<Void,Void,List<Alarm>> {
 
+        @Override
+        protected List<Alarm> doInBackground(Void... voids) {
+            return new AlarmFacade().getAllAlarms();
+        }
     }
 }
