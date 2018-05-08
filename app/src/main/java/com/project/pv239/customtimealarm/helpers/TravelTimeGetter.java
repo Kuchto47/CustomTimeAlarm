@@ -44,7 +44,10 @@ public class TravelTimeGetter {
         long departureTime = requestedArrivalTime-travelTime;
         Leg response = TravelTimeGetter.callApi(api, alarm, departureTime);
         if(response != null) {
-            return response.duration_in_traffic.value;
+            if(response.duration_in_traffic != null){
+                return response.duration_in_traffic.value;
+            }
+            return response.duration.value;
         }
         return -1;
     }
