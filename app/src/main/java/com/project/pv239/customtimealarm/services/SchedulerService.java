@@ -39,8 +39,8 @@ public class SchedulerService extends JobIntentService {
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        Log.d("==SERVICE==","work" + intent.getExtras().getInt(INTENT_TYPE_KEY));
-        switch (intent.getExtras().getInt(INTENT_TYPE_KEY)){
+        Log.d("==SERVICE==","work" + intent.getIntExtra(INTENT_TYPE_KEY, -1));
+        switch (intent.getIntExtra(INTENT_TYPE_KEY, -1)){
             case SCHEDULE_ALL:
                 new GetAlarmsTask(new WeakReference<>(this)).execute();
                 break;

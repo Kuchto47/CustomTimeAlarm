@@ -13,8 +13,10 @@ public class ScheduleReceiver extends BroadcastReceiver{
             Intent i = new Intent();
             i.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.SCHEDULE_ALL);
             SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,i);
+            Log.d("==SERVICE==","boot and pcg replace");
         }
         else {//alarm manager called us
+            Log.d("==SERVICE==", "alarm manager tick " + intent.getIntExtra(SchedulerService.INTENT_TYPE_KEY, -1));
             SchedulerService.enqueueWork(context,SchedulerService.class,SchedulerService.JOB_ID,intent);
         }
     }
