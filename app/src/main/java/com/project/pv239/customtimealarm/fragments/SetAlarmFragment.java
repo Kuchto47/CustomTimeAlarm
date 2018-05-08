@@ -1,6 +1,7 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,6 +37,8 @@ import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
+import com.project.pv239.customtimealarm.services.ScheduleReceiver;
+import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
 
@@ -182,6 +185,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
+                    Intent intent = new Intent();
+                    intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mAlarm);
+                    intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
+                    SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
                     new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
                     closeFragment();
                 } else {
@@ -216,6 +223,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroy() {
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_SERIALIZABLE_KEY, mAlarm);
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
+            SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
         }
     }
@@ -234,11 +245,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
     }
 
-    static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
+    public static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
 
-        UpdateAlarmInDbTask(WeakReference<Alarm> alarm) {
+        public UpdateAlarmInDbTask(WeakReference<Alarm> alarm) {
             mAlarm = alarm;
         }
 

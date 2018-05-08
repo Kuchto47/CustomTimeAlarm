@@ -1,7 +1,6 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -10,9 +9,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.AlarmManagerCompat;
 import android.support.v4.app.JobIntentService;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.activities.WakeUpActivity;
@@ -33,37 +30,45 @@ public class SchedulerService extends JobIntentService {
     public static final int WAKE_UP = 5;
     public static final int BEDTIME_NOTIFICATION = 6;
     public static final int JOB_ID = 1000;
-    public static final String INTENT_KEY= "type";
+    public static final String INTENT_TYPE_KEY = "type";
+    public static final String INTENT_SERIALIZABLE_KEY = "alarm_object";
+    public static final String INTENT_ALARM_ID_KEY = "alarm_id";
     private static final int TEN_MINUTES = 1000*60*10;
     private static final int HOUR = 1000*60*60;
+    private static final int NOTIFICATION_ID = 100000;
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
-        Log.d("==SERVICE==","work");
-        switch (intent.getExtras().getInt(INTENT_KEY)){
+        Log.d("==SERVICE==","work" + intent.getExtras().getInt(INTENT_TYPE_KEY));
+        switch (intent.getExtras().getInt(INTENT_TYPE_KEY)){
             case SCHEDULE_ALL:
                 new GetAlarmsTask(new WeakReference<>(this)).execute();
                 break;
             case SCHEDULED:
+                scheduleAlarm((Alarm)intent.getSerializableExtra(INTENT_SERIALIZABLE_KEY));
                 break;
             case WAKE_UP:
                 Intent i = new Intent(this, WakeUpActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                i.putExtra(INTENT_SERIALIZABLE_KEY, intent.getSerializableExtra(INTENT_SERIALIZABLE_KEY));
                 startActivity(i);
                 break;
             case BEDTIME_NOTIFICATION:
                 createNotification();
                 break;
             case ALARM_CREATED:
+                scheduleAlarm((Alarm)intent.getSerializableExtra(INTENT_SERIALIZABLE_KEY));
                 break;
             case ALARM_CANCELLED:
+                cancelAlarm(intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
                 break;
             case ALARM_CHANGED:
+                scheduleAlarm((Alarm)intent.getSerializableExtra(INTENT_SERIALIZABLE_KEY));
                 break;
         }
     }
 
-    public void createNotification(){
+    public void createNotification() {
         //TODO
 
 //                NotificationCompat.Builder mBuilder =
@@ -74,31 +79,56 @@ public class SchedulerService extends JobIntentService {
 //                mNotificationManager.notify(1, mBuilder.build());
     }
 
-    public void schedlueAlarmList(List<Alarm> list){
-        for (Alarm a : list) {
-            if (a.isOn()) {
-                Log.d("==SERVICE==", "alarm scheduled " + a.getId());
-                long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(a);
-                long timeToAlarm = alarmTime - System.currentTimeMillis();
-                if (timeToAlarm > HOUR)
-                    setAlarmManager(a.getId(), SCHEDULED, alarmTime - HOUR);
-                if (timeToAlarm <= HOUR && timeToAlarm > TEN_MINUTES)
-                    setAlarmManager(a.getId(), SCHEDULED, alarmTime - TEN_MINUTES);
-                if (timeToAlarm <= TEN_MINUTES) {
-                    setAlarmManager(a.getId(), WAKE_UP, alarmTime);
-                }
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                int bedtimeMilis = prefs.getInt("sleep_time", 480)*60*1000;
-                if (timeToAlarm > bedtimeMilis){
-                    setAlarmManager(a.getId(), BEDTIME_NOTIFICATION, alarmTime - bedtimeMilis);
-                }
+    public void cancelAlarm(int id){
+        Log.d("==SERVICE==", "alarm cancelled " + id);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent myIntent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                getApplicationContext(), id, myIntent, 0);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent = PendingIntent.getBroadcast(
+                getApplicationContext(), id + NOTIFICATION_ID, myIntent, 0);
+        alarmManager.cancel(pendingIntent);
+    }
+
+    public void scheduleAlarm(Alarm alarm){
+        if (alarm.isOn()) {
+            Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
+            long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
+            long timeToAlarm = alarmTime - alarm.getMorningRoutine() - System.currentTimeMillis();
+            Intent intent = new Intent(this, ScheduleReceiver.class);
+            if (timeToAlarm > HOUR) {
+                intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
+                intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
+                setAlarmManager(alarm.getId(), intent, alarmTime - HOUR);
             }
+            if (timeToAlarm <= HOUR && timeToAlarm > TEN_MINUTES) {
+                intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
+                intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
+                setAlarmManager(alarm.getId(), intent, alarmTime - TEN_MINUTES);
+            }
+            if (timeToAlarm <= TEN_MINUTES) {
+                intent.putExtra(INTENT_TYPE_KEY, WAKE_UP);
+                intent.putExtra(INTENT_SERIALIZABLE_KEY, alarm);
+                setAlarmManager(alarm.getId(), intent, alarmTime);
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            int bedtimeMilis = prefs.getInt("sleep_time", 480)*60*1000;
+            if (timeToAlarm > bedtimeMilis){
+                intent.putExtra(INTENT_TYPE_KEY, BEDTIME_NOTIFICATION);
+                setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMilis);
+            }
+        }
+        else {
+
+            Log.d("==SERVICE==", "alarm cancelled " + alarm.toString());
+            cancelAlarm(alarm.getId());
         }
     }
 
-    private void setAlarmManager(int alarmId, int intentFlag, long mills){
-        Intent intent = new Intent(this, ScheduleReceiver.class);
-        intent.putExtra(INTENT_KEY, intentFlag);
+
+
+    private void setAlarmManager(int alarmId, Intent intent, long mills){
         PendingIntent pIntent = PendingIntent.getBroadcast(this, alarmId, intent, 0);
         AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -109,6 +139,11 @@ public class SchedulerService extends JobIntentService {
         }
     }
 
+    public void scheduleAlarmList(List<Alarm> list){
+        for (Alarm alarm : list) {
+            scheduleAlarm(alarm);
+        }
+    }
 
     static class GetAlarmsTask extends AsyncTask<Void,Void,List<Alarm>>{
 
@@ -124,7 +159,7 @@ public class SchedulerService extends JobIntentService {
 
         @Override
         protected void onPostExecute(List<Alarm> alarms) {
-            mScheduler.get().schedlueAlarmList(alarms);
+            mScheduler.get().scheduleAlarmList(alarms);
         }
     }
 }
