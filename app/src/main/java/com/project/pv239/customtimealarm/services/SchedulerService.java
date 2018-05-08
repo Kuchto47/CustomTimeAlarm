@@ -69,14 +69,12 @@ public class SchedulerService extends JobIntentService {
     }
 
     public void createNotification() {
-        //TODO
-
-//                NotificationCompat.Builder mBuilder =
-//                    new NotificationCompat.Builder(getApplicationContext())
-//                            .setContentTitle("My notification")
-//                            .setContentText("Hello World!");
-//                NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//                mNotificationManager.notify(1, mBuilder.build());
+        /*NotificationCompat.Builder mBuilder =
+            new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("My notification")
+                    .setContentText("Hello World!");
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(1, mBuilder.build());*/
     }
 
     public void cancelAlarm(int id){
