@@ -3,17 +3,21 @@ package com.project.pv239.customtimealarm.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
+import com.project.pv239.customtimealarm.services.SchedulerService;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -21,6 +25,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        prefs.registerOnSharedPreferenceChangeListener(
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    Log.d("==SERVICE==", "changed preferences");
+                    Intent i = new Intent();
+                    i.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.SCHEDULE_ALL);
+                    SchedulerService.enqueueWork(getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, i);
+                }
+        });
         //TODO test log
         /*new AsyncTask<Void, Void, Void>() {
             protected Void doInBackground(Void... voids) {

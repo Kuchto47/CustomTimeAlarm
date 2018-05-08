@@ -21,7 +21,7 @@ public class PlacesProvider {
     public static String getOrigin() {
         try{
             return new getLocationOfDeviceTask().execute().get();
-        } catch(Exception e){
+            } catch(Exception e){
             Log.d("==EX==", "Exception occurred.");
             return "FAILURE";
         }
@@ -47,7 +47,10 @@ public class PlacesProvider {
             } catch (SecurityException exc) {
                 Log.d("SecEx", "Security exception thrown while getting last known location.");
             }
+
+            Log.d("==SERVICE==", "location of device " + bestLocation.toString());
             return bestLocation;
+
         }
 
         @Override
