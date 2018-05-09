@@ -71,6 +71,7 @@ public class PlacesProvider {
                 } catch (IOException exc) {
                     Log.d("IOEx", "Exception thrown while getting addresses. Message: "+exc.getMessage());
                 }
+                return location.getLatitude() +", " + location.getLongitude();
             }
             return "FAILURE_INSIDE";
         }
