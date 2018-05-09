@@ -17,7 +17,7 @@ public interface AlarmDao {
     List<Alarm> getAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void addAlarm(Alarm alarm);
+    long addAlarm(Alarm alarm);
 
     @Update
     void updateAlarm(Alarm alarm);

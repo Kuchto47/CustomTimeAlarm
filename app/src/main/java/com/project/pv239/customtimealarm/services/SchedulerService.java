@@ -36,8 +36,8 @@ public class SchedulerService extends JobIntentService {
     public static final int JOB_ID = 1000;
     public static final String INTENT_TYPE_KEY = "type";
     public static final String INTENT_ALARM_ID_KEY = "alarm_id";
-    private static final int TEN_MINUTES = 1000*10;//60*10;
-    private static final int HOUR = 1000*60;//*60;
+    private static final int MINUTE = 1000*60;
+    private static final int HOUR = 1000*60*60;
     private static final int NOTIFICATION_ID = 100000;
 
     @Override
@@ -66,10 +66,11 @@ public class SchedulerService extends JobIntentService {
                 try {
                     list = new GetAlarms().execute().get();
                 }catch (InterruptedException|ExecutionException e){
-                    e.printStackTrace();
+                    Log.e("EX","load alarm failed");
                 }
                 if (list != null)
                     for(Alarm a : list) {
+                        Log.d("==SERVICE==", "" + a.getId() +  " "+ intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
                         if (a.getId() == intent.getIntExtra(INTENT_ALARM_ID_KEY, -1))
                             scheduleAlarm(a);
                     }
@@ -78,16 +79,16 @@ public class SchedulerService extends JobIntentService {
     }
 
     public void createNotification() {
-        /*SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
-        if(shouldShowNotification){
-            NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle("My notification")
-                    .setContentText("Hello World!");
-            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(1, mBuilder.build());
-        }*/
+//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+//        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
+//        if(shouldShowNotification){
+//            NotificationCompat.Builder mBuilder =
+//            new NotificationCompat.Builder(getApplicationContext())
+//                    .setContentTitle("My notification")
+//                    .setContentText("Hello World!");
+//            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//            mNotificationManager.notify(1, mBuilder.build());
+//        }
     }
 
     public void cancelAlarm(int id){
@@ -106,30 +107,28 @@ public class SchedulerService extends JobIntentService {
         if (alarm.isOn()) {
             Log.d("==SERVICE==", "alarm scheduling " + alarm.getId());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
-            Log.d("==SERVICE==", "TIMES " + System.currentTimeMillis() + " " + alarmTime);
             if(alarmTime == -1){
                 Log.d("==ALARMTIME==", "equal to -1, we should probably set default wakeuptime here.");
             }
             Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + " " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
-            if (timeToAlarm <= TEN_MINUTES) {
+            if (timeToAlarm <= MINUTE*11) {
                 Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 10 MINS");
                 intent.putExtra(INTENT_TYPE_KEY, WAKE_UP);
                 intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
-                Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 10 again");
                 setAlarmManager(alarm.getId(), intent, alarmTime);
             } else {
-                if (timeToAlarm > HOUR) {
-                    Log.d("==SERVICE==", "TIME TO ALARM MORE THAN 1 HOUR");
+                if (timeToAlarm > HOUR + MINUTE*5) {
+                    Log.d("==SERVICE==", "TIME TO ALARM MORE THAN 1 HOUR CHECK IN " + (alarmTime - HOUR));
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                     setAlarmManager(alarm.getId(), intent, alarmTime - HOUR);
                 } else {
-                    Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 1 HOUR");
+                    Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 1 HOUR CHECK IN " + (alarmTime - MINUTE*10));
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
-                    setAlarmManager(alarm.getId(), intent, alarmTime - TEN_MINUTES);
+                    setAlarmManager(alarm.getId(), intent, alarmTime - MINUTE*10);
                 }
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -159,7 +158,7 @@ public class SchedulerService extends JobIntentService {
         AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         am.cancel(pIntent);
 
-        Log.d("==SERVICE==", "set with intent" + intent.getIntExtra(INTENT_TYPE_KEY, -1));
+        Log.d("==SERVICE==", "set with intent " + intent.getIntExtra(INTENT_TYPE_KEY, -1));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mills, pIntent);
         }

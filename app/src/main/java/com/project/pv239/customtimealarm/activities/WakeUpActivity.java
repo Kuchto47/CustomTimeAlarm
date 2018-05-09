@@ -87,7 +87,7 @@ public class WakeUpActivity extends AppCompatActivity{
                         @Override
                         public void onClick(View v) {
                             alarm.setOn(false);
-                            new SetAlarmFragment.UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
+                            new UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
                             mMediaPlayer.stop();
                             finish();
                         }
@@ -121,6 +121,20 @@ public class WakeUpActivity extends AppCompatActivity{
         @Override
         protected List<Alarm> doInBackground(Void... voids) {
             return new AlarmFacade().getAllAlarms();
+        }
+    }
+
+    private static class UpdateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+        WeakReference<Alarm> mAlarm;
+
+        UpdateAlarmInDbTask(WeakReference<Alarm> alarmWeakReference) {
+            mAlarm = alarmWeakReference;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            new AlarmFacade().updateAlarm(mAlarm.get());
+            return null;
         }
     }
 }

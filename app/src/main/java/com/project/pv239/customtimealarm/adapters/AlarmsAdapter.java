@@ -83,11 +83,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHolder.mAlarm.setOn(isChecked);
-            Intent intent = new Intent();
-            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mHolder.mAlarm.getId());
-            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
-            SchedulerService.enqueueWork(mContext, SchedulerService.class, SchedulerService.JOB_ID, intent);
-            (new UpdateAlarmTask(new WeakReference<>(mHolder.mAlarm))).execute();
+            (new UpdateAlarmTask(new WeakReference<>(mHolder), new WeakReference<>(mContext))).execute();
         }
     }
 
@@ -99,15 +95,21 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
     }
 
     public static class UpdateAlarmTask extends AsyncTask<Void, Void, List<Alarm>>{
-        private WeakReference<Alarm> mAlarm;
+        private WeakReference<ViewHolder> mHolder;
+        private WeakReference<Context> mContext;
 
-        UpdateAlarmTask(WeakReference<Alarm> alarm){
-            mAlarm = alarm;
+        UpdateAlarmTask(WeakReference<ViewHolder> holder, WeakReference<Context> context){
+            mHolder = holder;
+            mContext = context;
         }
         @Override
         protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            alarmFacade.updateAlarm(mAlarm.get());
+            alarmFacade.updateAlarm(mHolder.get().mAlarm);
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mHolder.get().mAlarm.getId());
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }

@@ -1,6 +1,7 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -41,6 +42,7 @@ import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -185,11 +187,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                    Intent intent = new Intent();
-                    intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
-                    intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
-                    SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
-                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
                     closeFragment();
                 } else {
                     Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
@@ -223,11 +221,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroy() {
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
-            Intent intent = new Intent();
-            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
-            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
-            SchedulerService.enqueueWork(getContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
-            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
         }
     }
 
@@ -248,15 +242,21 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
+        private WeakReference<Context> mContext;
 
-        public UpdateAlarmInDbTask(WeakReference<Alarm> alarm) {
+        public UpdateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
             mAlarm = alarm;
+            mContext = context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
             alarmFacade.updateAlarm(mAlarm.get());
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.get().getId());
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
@@ -264,15 +264,23 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
+        private WeakReference<Context> mContext;
 
-        CreateAlarmInDbTask(WeakReference<Alarm> alarm) {
+
+        CreateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
             mAlarm = alarm;
+            mContext =context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            alarmFacade.addAlarm(mAlarm.get());
+            long id = alarmFacade.addAlarm(mAlarm.get());
+            Log.d("==SERVICE==", ""+id);
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, (int)id);
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
