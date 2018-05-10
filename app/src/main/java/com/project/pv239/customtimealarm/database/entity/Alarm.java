@@ -215,6 +215,7 @@ public class Alarm implements Serializable{
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getHourOfArrival()+ ":"+ this.getMinuteOfHourOfArrival()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
+        return this.getDestination()+" "+this.getTimeOfArrival()+" " + this.getTimeOfDefaultAlarm() + " " +
+                this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }
