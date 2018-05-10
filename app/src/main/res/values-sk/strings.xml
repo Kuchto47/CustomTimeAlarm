@@ -14,8 +14,8 @@
     <string name="alarms">Budíky</string>
     <string name="cancellation_dialog_title">Aplikácia bude zavretá</string>
     <string name="cancellation_dialog_body">
-        Pre aplikáciu je nevyhnutné mať prístup ku polohe ziariadnia prostredníctvom GPS,
-        inak bude nefunkčná. Želáte si aplikácie ukončiť alebo povoliť prístup k polohe GPS?
+        Pre aplikáciu je nevyhnutné mať prístup k polohe ziariadnia prostredníctvom GPS,
+        inak bude nefunkčná. Želáte si aplikáciu ukončiť alebo povoliť prístup k polohe GPS?
     </string>
     <string name="cancellation_dialog_close_app_button">Zavrieť</string>
     <string name="cancellation_dialog_grant_permission_again_button">Povoliť GPS</string>
