@@ -67,6 +67,7 @@ public class WakeUpActivity extends AppCompatActivity{
             mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)//for some unknown reason not working
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
                     .build());
         }else {
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
