@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -87,6 +88,7 @@ public class SchedulerService extends JobIntentService {
             NotificationCompat.Builder mBuilder =
             new NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.drawable.bed)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icons_alarm_clock))
                     .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
                     .setContentText(getResources().getString(R.string.bedtime_notification_body))
                     .setStyle(new NotificationCompat.BigTextStyle()

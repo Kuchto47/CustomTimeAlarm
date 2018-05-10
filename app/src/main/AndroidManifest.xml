@@ -10,7 +10,7 @@
     <!--allowBackup should be changed to true when DB wont be changing anymore-->
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/icons_alarm_clock"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
