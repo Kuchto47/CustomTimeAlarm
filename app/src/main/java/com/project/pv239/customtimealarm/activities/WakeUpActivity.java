@@ -55,7 +55,8 @@ public class WakeUpActivity extends AppCompatActivity{
             setShowWhenLocked(true);
             setTurnScreenOn(true);
             KeyguardManager m = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-            m.requestDismissKeyguard(this, null);
+            if (m != null)
+                m.requestDismissKeyguard(this, null);
         }
         else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
@@ -109,11 +110,12 @@ public class WakeUpActivity extends AppCompatActivity{
                             AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
-                            }
-                            else {
-                                am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                            if (am != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                                } else {
+                                    am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                                }
                             }
                             mMediaPlayer.stop();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

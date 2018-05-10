@@ -33,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.project.pv239.customtimealarm.App;
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
@@ -85,7 +86,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY);
+        mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY); //TODO:somehow close fragment
         View view = inflater.inflate(R.layout.fragment_set_alarm, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         FragmentManager f = getChildFragmentManager();
@@ -137,7 +138,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                 dialog.show();
             }
         });
-        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(),
+        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(), //TODO: is it okay to use appcontext?
                 R.array.travel_mode, android.R.layout.simple_spinner_item);
         travelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTravelMode.setAdapter(travelAdapter);
@@ -205,7 +206,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             public void onClick(View v) {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
+                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
                     closeFragment();
                 } else {
                     Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
@@ -239,7 +240,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public void onDestroy() {
         super.onDestroy();
         if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
-            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
+            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
         }
     }
 
@@ -260,11 +261,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
-        private WeakReference<Context> mContext;
 
-        public UpdateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
+        UpdateAlarmInDbTask(WeakReference<Alarm> alarm) {
             mAlarm = alarm;
-            mContext = context;
         }
 
         @Override
@@ -274,7 +273,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             Intent intent = new Intent();
             intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.get().getId());
             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
-            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+            SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
@@ -282,12 +281,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
-        private WeakReference<Context> mContext;
 
 
-        CreateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
+        CreateAlarmInDbTask(WeakReference<Alarm> alarm) {
             mAlarm = alarm;
-            mContext =context;
         }
 
         @Override
@@ -298,7 +295,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             Intent intent = new Intent();
             intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, (int)id);
             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
-            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+            SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
