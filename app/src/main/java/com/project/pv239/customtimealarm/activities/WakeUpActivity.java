@@ -89,7 +89,11 @@ public class WakeUpActivity extends AppCompatActivity{
                             alarm.setOn(false);
                             new UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
                             mMediaPlayer.stop();
-                            finish();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                finishAndRemoveTask();
+                            }else {
+                                finish();
+                            }
                         }
                     });
 
@@ -110,7 +114,11 @@ public class WakeUpActivity extends AppCompatActivity{
                                 am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
                             }
                             mMediaPlayer.stop();
-                            finish();
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                finishAndRemoveTask();
+                            }else {
+                                finish();
+                            }
                         }
                     });
                 }
