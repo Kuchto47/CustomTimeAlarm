@@ -5,7 +5,7 @@
     <string name="time_of_arrival">Time of arrival: </string>
     <string name="notification_bed_time">Notification for bed time</string>
     <string name="notification_GTFO">Notification for departure</string>
-    <string name="bedtime">Bedtime</string>
+    <string name="bedtime">Bedtime Notification</string>
     <string name="time_to_sleep">Time to sleep</string>
     <string name="snooze_time">Snooze time in minutes</string>
     <string name="morning_time">Time for morning routine</string>
@@ -24,4 +24,11 @@
     <string name="delete_dialog_text">Do you want to delete this alarm?</string>
     <string name="turn_alarm_off_button">TURN OFF</string>
     <string name="snooze_button">SNOOZE</string>
+    <string name="bedtime_notification_title">Time for bed!</string>
+    <string name="bedtime_notification_body">
+        Go to bed and sleep well&#8230;
+    </string>
+    <string name="bedtime_notification_body_big_text">
+        Go to bed and sleep well. If you do it now, you will meet required %s1 hours to sleep.
+    </string>
 </resources>

@@ -14,12 +14,12 @@ import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.activities.WakeUpActivity;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.AlarmTimeGetter;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +54,7 @@ public class SchedulerService extends JobIntentService {
                 startActivity(i);
                 break;
             case BEDTIME_NOTIFICATION:
-                createNotification();
+                createBedTimeNotification();
                 break;
             case ALARM_CANCELLED:
                 cancelAlarm(intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
@@ -78,17 +78,31 @@ public class SchedulerService extends JobIntentService {
         }
     }
 
-    public void createNotification() {
+    public void createBedTimeNotification() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean shouldShowNotification = pref.getBoolean("bedtime", false);
         if(shouldShowNotification){
+            int sleepTimeInMinutes = pref.getInt("sleep_time", 480);
+            String sleepTime = this.convertMinutesIntoHours(sleepTimeInMinutes);
             NotificationCompat.Builder mBuilder =
             new NotificationCompat.Builder(getApplicationContext())
-                    .setContentTitle("My notification")
-                    .setContentText("Hello World!");
+                    .setSmallIcon(R.drawable.bed)
+                    .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
+                    .setContentText(getResources().getString(R.string.bedtime_notification_body))
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(getResources().getString(R.string.bedtime_notification_body_big_text)
+                            .replace("%s1", sleepTime)))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(1, mBuilder.build());
         }
+    }
+
+    private String convertMinutesIntoHours(int mins){
+        int hours = mins/60;
+        int minutes = mins % 60;
+        return Integer.toString(hours)+":"+Integer.toString(minutes);
     }
 
     public void cancelAlarm(int id){

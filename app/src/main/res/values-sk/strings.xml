@@ -6,7 +6,7 @@
     <string name="time_of_arrival">Čas príchodu: </string>
     <string name="notification_bed_time">Upozornenie na spánok</string>
     <string name="notification_GTFO">Upozornenie na odchod</string>
-    <string name="bedtime">Spánok</string>
+    <string name="bedtime">Upozornenie Na Spánok</string>
     <string name="time_to_sleep">Čas spánku</string>
     <string name="snooze_time">Posunúť budík o minúty</string>
     <string name="morning_time">Trvanie ranných príprav</string>
@@ -25,4 +25,11 @@
     <string name="delete_dialog_text">želáte si zmazať tento budík?</string>
     <string name="turn_alarm_off_button">VYPNÚŤ</string>
     <string name="snooze_button">POSUNÚŤ</string>
+    <string name="bedtime_notification_title">Je čas ísť spať!</string>
+    <string name="bedtime_notification_body">
+        Choď si ľahnúť, dobre sa vyspi&#8230;
+    </string>
+    <string name="bedtime_notification_body_big_text">
+        Choď si ľahnúť dobre sa vyspi. Ak tak urobíš teraz, budeš spať požadovaných %s1 hodín.
+    </string>
 </resources>
