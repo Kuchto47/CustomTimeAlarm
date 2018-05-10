@@ -64,7 +64,9 @@ public class WakeUpActivity extends AppCompatActivity{
         mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA).build());
+                    .setUsage(AudioAttributes.USAGE_ALARM)//for some unknown reason not working
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build());
         }else {
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
         }
@@ -124,6 +126,11 @@ public class WakeUpActivity extends AppCompatActivity{
                 }
             }
     }
+
+    @Override
+    public void onBackPressed() {
+    }
+
     static class GetAlarms extends AsyncTask<Void,Void,List<Alarm>> {
 
         @Override
