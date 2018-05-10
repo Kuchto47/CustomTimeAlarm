@@ -79,20 +79,20 @@ public class SchedulerService extends JobIntentService {
     }
 
     public void createNotification() {
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-//        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
-//        if(shouldShowNotification){
-//            NotificationCompat.Builder mBuilder =
-//            new NotificationCompat.Builder(getApplicationContext())
-//                    .setContentTitle("My notification")
-//                    .setContentText("Hello World!");
-//            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//            mNotificationManager.notify(1, mBuilder.build());
-//        }
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
+        if(shouldShowNotification){
+            NotificationCompat.Builder mBuilder =
+            new NotificationCompat.Builder(getApplicationContext())
+                    .setContentTitle("My notification")
+                    .setContentText("Hello World!");
+            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(1, mBuilder.build());
+        }
     }
 
     public void cancelAlarm(int id){
-        Log.d("==SERVICE==", "alarm cancelled " + id);
+        Log.d("==SERVICE==", "alarm with id " + id + " cancelling");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent myIntent = new Intent(getApplicationContext(), ScheduleReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -101,6 +101,7 @@ public class SchedulerService extends JobIntentService {
         pendingIntent = PendingIntent.getBroadcast(
                 getApplicationContext(), id + NOTIFICATION_ID, myIntent, 0);
         alarmManager.cancel(pendingIntent);
+        Log.d("==SERVICE==", "alarm with id " + id + " cancelled");
     }
 
     public void scheduleAlarm(Alarm alarm) {
@@ -145,8 +146,7 @@ public class SchedulerService extends JobIntentService {
             Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
         }
         else {
-
-            Log.d("==SERVICE==", "alarm cancelled " + alarm.toString());
+            Log.d("==SERVICE==", "calling cancelAlarm() for Alarm: " + alarm.toString());
             cancelAlarm(alarm.getId());
         }
     }
