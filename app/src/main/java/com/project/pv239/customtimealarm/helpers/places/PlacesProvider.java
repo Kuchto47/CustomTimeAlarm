@@ -47,8 +47,6 @@ public class PlacesProvider {
             } catch (SecurityException exc) {
                 Log.d("SecEx", "Security exception thrown while getting last known location.");
             }
-
-            Log.d("==SERVICE==", "location of device " + bestLocation.toString());
             return bestLocation;
 
         }

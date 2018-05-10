@@ -83,7 +83,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY);
         View view = inflater.inflate(R.layout.fragment_set_alarm, container, false);
         mUnbinder = ButterKnife.bind(this, view);
