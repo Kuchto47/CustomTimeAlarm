@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Budík</string>
+    <string name="settings">Nastavenia</string>
+    <string name="destination">Cieľ: </string>
+    <string name="time_of_arrival">Čas príchodu: </string>
+    <string name="notification_bed_time">Upozornenie na spánok</string>
+    <string name="notification_GTFO">Upozornenie na odchod</string>
+    <string name="bedtime">Spánok</string>
+    <string name="time_to_sleep">Čas spánku</string>
+    <string name="snooze_time">Posunúť budík o minúty</string>
+    <string name="morning_time">Trvanie ranných príprav</string>
+    <string name="transport_type">Typ dopravy</string>
+    <string name="alarms">Budíky</string>
+    <string name="cancellation_dialog_title">Aplikácia bude zavretá</string>
+    <string name="cancellation_dialog_body">
+        Pre aplikáciu je nevyhnutné mať prístup k polohe ziariadnia prostredníctvom GPS,
+        inak bude nefunkčná. Želáte si aplikáciu ukončiť alebo povoliť prístup k polohe GPS?
+    </string>
+    <string name="cancellation_dialog_close_app_button">Zavrieť</string>
+    <string name="cancellation_dialog_grant_permission_again_button">Povoliť GPS</string>
+    <string name="enter_dest">Zadajte cieľ</string>
+    <string name="delete_dialog_cancel">Zavrieť</string>
+    <string name="delete_dialog_delete">Zmazať</string>
+    <string name="delete_dialog_text">želáte si zmazať tento budík?</string>
+    <string name="turn_alarm_off_button">VYPNÚŤ</string>
+    <string name="snooze_button">POSUNÚŤ</string>
+</resources>

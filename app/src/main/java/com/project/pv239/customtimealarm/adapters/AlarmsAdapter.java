@@ -2,6 +2,7 @@ package com.project.pv239.customtimealarm.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -20,6 +21,7 @@ import com.project.pv239.customtimealarm.database.DatabaseProvider;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
+import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -81,11 +83,11 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             mHolder.mAlarm.setOn(isChecked);
-            (new UpdateAlarmTask(new WeakReference<>(mHolder.mAlarm))).execute();
+            (new UpdateAlarmTask(new WeakReference<>(mHolder), new WeakReference<>(mContext))).execute();
         }
     }
 
-    void removeItem(int pos){
+    private void removeItem(int pos){
         mAlarms.remove(pos);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, mAlarms.size());
@@ -93,16 +95,22 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
     }
 
     public static class UpdateAlarmTask extends AsyncTask<Void, Void, List<Alarm>>{
-        private WeakReference<Alarm> mAlarm;
+        private WeakReference<ViewHolder> mHolder;
+        private WeakReference<Context> mContext;
 
-        UpdateAlarmTask(WeakReference<Alarm> alarm){
-            mAlarm = alarm;
+        UpdateAlarmTask(WeakReference<ViewHolder> holder, WeakReference<Context> context){
+            mHolder = holder;
+            mContext = context;
         }
         @Override
         protected List<Alarm> doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            alarmFacade.updateAlarm(mAlarm.get());
-            return alarmFacade.getAllAlarms();
+            alarmFacade.updateAlarm(mHolder.get().mAlarm);
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mHolder.get().mAlarm.getId());
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+            return null;
         }
     }
 
@@ -133,7 +141,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
             });
         }
 
-        void showDeleteDialog(Context context){
+        void showDeleteDialog(final Context context){
             new AlertDialog.Builder(context)
                     .setTitle(R.string.delete_dialog_delete)
                     .setMessage(R.string.delete_dialog_text)
@@ -141,6 +149,10 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
                         public void onClick(DialogInterface dialog, int whichButton) {
                             new DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
                             removeItem(getAdapterPosition());
+                            Intent intent = new Intent();
+                            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
+                            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
+                            SchedulerService.enqueueWork(context, SchedulerService.class, SchedulerService.JOB_ID, intent);
                             dialog.dismiss();
                         }
 

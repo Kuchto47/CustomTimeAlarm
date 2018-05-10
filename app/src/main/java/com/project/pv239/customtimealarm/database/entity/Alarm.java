@@ -3,9 +3,11 @@ package com.project.pv239.customtimealarm.database.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.Nullable;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
+import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 
 import java.io.Serializable;
 import java.util.Locale;
@@ -21,9 +23,10 @@ public class Alarm implements Serializable{
     private String destination;
 
     @ColumnInfo(name = "hour")
-    private int hour;
+    private int hourOfArrival;
+
     @ColumnInfo(name = "minute")
-    private int minute;
+    private int minuteOfHourOfArrival;
 
     @ColumnInfo(name = "traffic_model")
     @TrafficModel
@@ -45,11 +48,15 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "morning_routine")
     private int morningRoutine;
 
+    public Alarm() {
+        this("", 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, false, 0);
+    }
+
     public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
                  double latitude, double longitude, boolean on, int morningRoutine){
         this.destination = destination;
-        this.hour = hour;
-        this.minute = minute;
+        this.hourOfArrival = hour;
+        this.minuteOfHourOfArrival = minute;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
         this.latitude = latitude;
@@ -74,24 +81,28 @@ public class Alarm implements Serializable{
         this.destination = destination;
     }
 
-    public int getHour() {
-        return hour;
+    public int getHourOfArrival() {
+        return hourOfArrival;
     }
 
-    public void setHour(int hour) {
-        this.hour = hour;
+    public void setHourOfArrival(int hour) {
+        this.hourOfArrival = hour;
     }
 
-    public int getMinute() {
-        return minute;
+    public int getMinuteOfHourOfArrival() {
+        return minuteOfHourOfArrival;
     }
 
-    public void setMinute(int minute) {
-        this.minute = minute;
+    public void setMinuteOfHourOfArrival(int minute) {
+        this.minuteOfHourOfArrival = minute;
     }
 
     public String getTimeOfArrival(){
-        return String.format(Locale.getDefault(),"%02d:%02d", hour, minute);
+        return String.format(Locale.getDefault(),"%02d:%02d", hourOfArrival, minuteOfHourOfArrival);
+    }
+
+    public long getTimeOfArrivalInSeconds() {
+        return TimeHelper.getTimeInSeconds(hourOfArrival, minuteOfHourOfArrival);
     }
 
     public int getTrafficModel() {
@@ -134,10 +145,16 @@ public class Alarm implements Serializable{
         this.on = on;
     }
 
+    /**
+     * @return number of seconds for morning routine
+     */
     public int getMorningRoutine() {
         return morningRoutine;
     }
 
+    /**
+     * @param morningRoutine number of seconds for morning routine
+     */
     public void setMorningRoutine(int morningRoutine) {
         this.morningRoutine = morningRoutine;
     }
@@ -148,8 +165,8 @@ public class Alarm implements Serializable{
         if (o == null || !(o instanceof Alarm)) return false;
         Alarm alarm = (Alarm) o;
         return Objects.equals(getDestination(), alarm.getDestination()) &&
-                getHour() == alarm.getHour() &&
-                getMinute() == alarm.getMinute() &&
+                getHourOfArrival() == alarm.getHourOfArrival() &&
+                getMinuteOfHourOfArrival() == alarm.getMinuteOfHourOfArrival() &&
                 getTrafficModel() == alarm.getTrafficModel() &&
                 getTravelMode() == alarm.getTravelMode() &&
                 getLatitude() == alarm.getLatitude() &&
@@ -160,12 +177,12 @@ public class Alarm implements Serializable{
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDestination(), getHour(), getMinute(), getTrafficModel(),
+        return Objects.hash(getDestination(), getHourOfArrival(), getMinuteOfHourOfArrival(), getTrafficModel(),
                 getTravelMode(), getLatitude(), getLongitude(), isOn(), getMorningRoutine());
     }
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getHour()+ ":"+ this.getMinute()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
+        return this.getDestination()+" "+this.getHourOfArrival()+ ":"+ this.getMinuteOfHourOfArrival()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }

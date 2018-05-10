@@ -17,8 +17,8 @@ public class AlarmFacade {
         return alarmDao.getAll();
     }
 
-    public void addAlarm(Alarm alarm) {
-        alarmDao.addAlarm(alarm);
+    public long addAlarm(Alarm alarm) {
+        return alarmDao.addAlarm(alarm);
     }
 
     public void updateAlarm(Alarm alarm) {

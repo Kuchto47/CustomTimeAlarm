@@ -21,19 +21,10 @@ public class PlacesProvider {
     public static String getOrigin() {
         try{
             return new getLocationOfDeviceTask().execute().get();
-        } catch(Exception e){
+            } catch(Exception e){
             Log.d("==EX==", "Exception occurred.");
             return "FAILURE";
         }
-    }
-
-    public static String getDestination(String dest) {
-        return PlacesProvider.getQueryPlaceString(dest);
-    }
-
-    private static String getQueryPlaceString(String place) {
-        String[] separatedPlace = place.split(" ");
-        return TextUtils.join("+", separatedPlace);
     }
 
     private static class getLocationOfDeviceTask extends AsyncTask<Void, Void, String> {
@@ -57,6 +48,7 @@ public class PlacesProvider {
                 Log.d("SecEx", "Security exception thrown while getting last known location.");
             }
             return bestLocation;
+
         }
 
         @Override
@@ -77,6 +69,7 @@ public class PlacesProvider {
                 } catch (IOException exc) {
                     Log.d("IOEx", "Exception thrown while getting addresses. Message: "+exc.getMessage());
                 }
+                return location.getLatitude() +", " + location.getLongitude();
             }
             return "FAILURE_INSIDE";
         }

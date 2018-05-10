@@ -2,8 +2,10 @@ package com.project.pv239.customtimealarm.api;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.project.pv239.customtimealarm.api.model.directions.DirectionsResponse;
+import com.project.pv239.customtimealarm.api.model.directions.Leg;
 import com.project.pv239.customtimealarm.api.model.geocoding.GeocodingResponse;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
@@ -23,12 +25,13 @@ public class GoogleMapsApiInformationGetter {
         this.googleMapsApi = new GoogleMapsApi();
     }
 
-    public int getTimeToDestinationInSeconds(@NonNull Alarm alarm){
+    public Leg getDirections(@NonNull Alarm alarm, long timeOfDeparture){
         final Call<DirectionsResponse> responseCall = googleMapsApi.getService().getDirections(
                 PlacesProvider.getOrigin(),
                 alarm.getDestination(),
                 TravelModeToString.get(alarm.getTravelMode()),
-                alarm.getTimeOfArrival(),
+                timeOfDeparture != -1 ? Long.toString(timeOfDeparture) : "now",
+                String.valueOf(alarm.getTimeOfArrivalInSeconds()),
                 TrafficModelToString.get(alarm.getTrafficModel()),
                 GoogleMapsApiKeyGetter.getApiKey()
         );
@@ -36,7 +39,7 @@ public class GoogleMapsApiInformationGetter {
         try{
             return new GetTimeTask(this, responseCall).execute().get();
         } catch (Exception e){
-            return -1;
+            return null;
             //TODO maybe throw some error?...
         }
     }
@@ -55,7 +58,7 @@ public class GoogleMapsApiInformationGetter {
         }
     }
 
-    private static class GetTimeTask extends AsyncTask<Void, Void, Integer> {
+    private static class GetTimeTask extends AsyncTask<Void, Void, Leg> {
         private WeakReference<GoogleMapsApiInformationGetter> mContext;
         private Call<DirectionsResponse> responseCall;
 
@@ -65,13 +68,13 @@ public class GoogleMapsApiInformationGetter {
         }
 
         @Override
-        protected Integer doInBackground(Void... voids) {
+        protected Leg doInBackground(Void... voids) {
             try{
                 Response<DirectionsResponse> gResponse = responseCall.execute();
                 DirectionsResponse responseBody = gResponse.body();
-                return responseBody.routes[0].legs[0].duration_in_traffic.value;
+                return responseBody.routes[0].legs[0];
             } catch (Exception e) {
-                return -1;
+                return null;
             }
         }
     }

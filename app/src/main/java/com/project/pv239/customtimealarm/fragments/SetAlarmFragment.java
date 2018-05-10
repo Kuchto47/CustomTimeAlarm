@@ -1,6 +1,8 @@
 package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -33,24 +34,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
-import com.project.pv239.customtimealarm.api.GoogleMapsApi;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
-import com.project.pv239.customtimealarm.api.GoogleMapsApiKeyGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
-import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
+import com.project.pv239.customtimealarm.services.ScheduleReceiver;
+import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 
-public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
+public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String ALARM_KEY = "alarm_key";
     private Alarm mAlarm;
@@ -85,7 +83,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY);
         View view = inflater.inflate(R.layout.fragment_set_alarm, container, false);
         mUnbinder = ButterKnife.bind(this, view);
@@ -93,7 +90,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
         if (mCreate) {
-           addFloadingButton();
+            addFloadingButton();
         }
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -114,11 +111,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
                 final TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        mAlarm.setHour(hourOfDay);
-                        mAlarm.setMinute(minute);
+                        mAlarm.setHourOfArrival(hourOfDay);
+                        mAlarm.setMinuteOfHourOfArrival(minute);
                     }
                 };
-                new TimePickerDialog(getContext(), listener, mAlarm.getHour(), mAlarm.getMinute(), true).show();
+                new TimePickerDialog(getContext(), listener, mAlarm.getHourOfArrival(), mAlarm.getMinuteOfHourOfArrival(), true).show();
             }
         });
         final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(),
@@ -175,7 +172,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         return view;
     }
 
-    public void addFloadingButton(){
+    public void addFloadingButton() {
         FloatingActionButton button = new FloatingActionButton(getContext());
         button.setImageResource(R.drawable.ic_done_white_24dp);
         FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
@@ -189,7 +186,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
             public void onClick(View v) {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
                     closeFragment();
                 } else {
                     Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
@@ -198,10 +195,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         });
     }
 
-    public boolean destinationTextChanged(TextView v){
+    public boolean destinationTextChanged(TextView v) {
         String text = v.getText().toString();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-        Tuple<Double> t = gm.getLanLonOfPlace(PlacesProvider.getDestination(text));
+        Tuple<Double> t = gm.getLanLonOfPlace(text);
         if (t != null) {
             mAlarm.setDestination(text);
             final LatLng ll = new LatLng(t.getFirst(), t.getSecond());
@@ -222,12 +219,12 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)){
-            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
+            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm), new WeakReference<Context>(getContext())).execute();
         }
     }
 
-    public void closeFragment(){
+    public void closeFragment() {
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         getActivity().getSupportFragmentManager().popBackStack();
     }
@@ -241,34 +238,48 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback{
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
     }
 
-    static class UpdateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+    public static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
+        private WeakReference<Context> mContext;
 
-        UpdateAlarmInDbTask(WeakReference<Alarm> alarm){
+        public UpdateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
             mAlarm = alarm;
+            mContext = context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
             alarmFacade.updateAlarm(mAlarm.get());
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.get().getId());
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CHANGED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
 
-    static class CreateAlarmInDbTask extends AsyncTask<Void,Void,Void>{
+    static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
+        private WeakReference<Context> mContext;
 
-        CreateAlarmInDbTask(WeakReference<Alarm> alarm){
+
+        CreateAlarmInDbTask(WeakReference<Alarm> alarm, WeakReference<Context> context) {
             mAlarm = alarm;
+            mContext =context;
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
-            alarmFacade.addAlarm(mAlarm.get());
+            long id = alarmFacade.addAlarm(mAlarm.get());
+            Log.d("==SERVICE==", ""+id);
+            Intent intent = new Intent();
+            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, (int)id);
+            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
+            SchedulerService.enqueueWork(mContext.get(), SchedulerService.class, SchedulerService.JOB_ID, intent);
             return null;
         }
     }
