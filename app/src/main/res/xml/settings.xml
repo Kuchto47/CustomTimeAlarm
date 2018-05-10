@@ -14,18 +14,14 @@
             android:key="sleep_time"
             android:persistent="true"
             android:numeric="integer"
-            android:defaultValue="@integer/eight"/>
-        <SwitchPreference
-            android:title="@string/notification_GTFO"
-            android:key="GTFO"
-            android:defaultValue="false"
-            android:persistent="true" />
+            android:defaultValue="@integer/eight_hours"/>
         <ListPreference
             android:title="@string/snooze_time"
             android:key="snooze"
             android:entries="@array/snooze_vals"
             android:entryValues="@array/snooze_vals"
             android:defaultValue="5"
+            android:numeric="integer"
             android:persistent="true"
             />
 
