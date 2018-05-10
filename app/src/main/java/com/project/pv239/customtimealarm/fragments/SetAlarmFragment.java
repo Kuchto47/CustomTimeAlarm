@@ -57,6 +57,8 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     protected EditText mDest;
     @BindView(R.id.timeEdit)
     protected TextView mTime;
+    @BindView(R.id.timeDefaultEdit)
+    protected TextView mTimeDefault;
     @BindView(R.id.travelMode)
     protected Spinner mTravelMode;
     @BindView(R.id.trafficModel)
@@ -115,7 +117,24 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                         mAlarm.setMinuteOfHourOfArrival(minute);
                     }
                 };
-                new TimePickerDialog(getContext(), listener, mAlarm.getHourOfArrival(), mAlarm.getMinuteOfHourOfArrival(), true).show();
+                TimePickerDialog dialog = new TimePickerDialog(getContext(), listener, mAlarm.getHourOfArrival(), mAlarm.getMinuteOfHourOfArrival(), true);
+                dialog.updateTime(mAlarm.getHourOfArrival(),mAlarm.getMinuteOfHourOfArrival());
+                dialog.show();
+            }
+        });
+        mTimeDefault.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final TimePickerDialog.OnTimeSetListener listener = new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        mAlarm.setHourOfDefaultAlarm(hourOfDay);
+                        mAlarm.setMinuteOfHourOfDefaultAlarm(minute);
+                    }
+                };
+                TimePickerDialog dialog = new TimePickerDialog(getContext(), listener, mAlarm.getHourOfArrival(), mAlarm.getMinuteOfHourOfArrival(), true);
+                dialog.updateTime(mAlarm.getHourOfDefaultAlarm(),mAlarm.getMinuteOfHourOfDefaultAlarm());
+                dialog.show();
             }
         });
         final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(),
