@@ -5,8 +5,8 @@
     <string name="time_of_arrival">Time of arrival: </string>
     <string name="notification_bed_time">Notification for bed time</string>
     <string name="notification_GTFO">Notification for departure</string>
-    <string name="bedtime">Bedtime</string>
-    <string name="time_to_sleep">Time to sleep</string>
+    <string name="bedtime">Bedtime notification</string>
+    <string name="time_to_sleep">Length of sleep</string>
     <string name="snooze_time">Snooze time in minutes</string>
     <string name="morning_time">Time for morning routine</string>
     <string name="transport_type">Type of transport</string>
@@ -24,4 +24,7 @@
     <string name="delete_dialog_text">Do you want to delete this alarm?</string>
     <string name="turn_alarm_off_button">TURN OFF</string>
     <string name="snooze_button">SNOOZE</string>
+    <string name="set_arrival_time">Set time of arrival</string>
+    <string name="set_default_time">Set time of default alarm</string>
+    <string name="default_alarm_info">This time will be used when we fail to get traffic information or location of device</string>
 </resources>

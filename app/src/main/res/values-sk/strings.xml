@@ -6,9 +6,9 @@
     <string name="time_of_arrival">Čas príchodu: </string>
     <string name="notification_bed_time">Upozornenie na spánok</string>
     <string name="notification_GTFO">Upozornenie na odchod</string>
-    <string name="bedtime">Spánok</string>
-    <string name="time_to_sleep">Čas spánku</string>
-    <string name="snooze_time">Posunúť budík o minúty</string>
+    <string name="bedtime">Notifikácia spánku</string>
+    <string name="time_to_sleep">Dĺžka spánku</string>
+    <string name="snooze_time">Dĺžka posunutia budíka v minútach</string>
     <string name="morning_time">Trvanie ranných príprav</string>
     <string name="transport_type">Typ dopravy</string>
     <string name="alarms">Budíky</string>
@@ -25,4 +25,8 @@
     <string name="delete_dialog_text">želáte si zmazať tento budík?</string>
     <string name="turn_alarm_off_button">VYPNÚŤ</string>
     <string name="snooze_button">POSUNÚŤ</string>
+    <string name="set_arrival_time">Nastaviť čas príchodu</string>
+    <string name="set_default_time">Nastaviť čas výchozieho budíka</string>
+    <string name="default_alarm_info">Tento čas bude použitý ak sa nepodarí získať informácie o premávke alebo polohu telefónu</string>
+
 </resources>
