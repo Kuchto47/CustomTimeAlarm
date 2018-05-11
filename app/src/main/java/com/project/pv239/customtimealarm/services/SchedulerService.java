@@ -88,7 +88,7 @@ public class SchedulerService extends JobIntentService {
             NotificationCompat.Builder mBuilder =
             new NotificationCompat.Builder(getApplicationContext())
                     .setSmallIcon(R.drawable.bed)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.icons_alarm_clock))
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
                     .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
                     .setContentText(getResources().getString(R.string.bedtime_notification_body))
                     .setStyle(new NotificationCompat.BigTextStyle()
