@@ -30,7 +30,6 @@ public class TravelTimeGetter {
     }
 
     private static int firstCall(GoogleMapsApiInformationGetter api, Alarm alarm) {
-        Log.d("==FIRSTCALL==", "values: "+UNDEFINED_DEPARTURE_TIME+" alarm: "+alarm.toString());
         Leg response = TravelTimeGetter.callApi(api, alarm, UNDEFINED_DEPARTURE_TIME);
         if(response != null){
             return response.duration.value;
