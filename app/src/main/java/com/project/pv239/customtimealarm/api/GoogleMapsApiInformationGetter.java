@@ -45,17 +45,21 @@ public class GoogleMapsApiInformationGetter {
     }
 
     public Tuple<Double> getLanLonOfPlace(String place){
-        final Call<GeocodingResponse> responseCall = googleMapsApi.getService().getLatLon(
-                place,
-                GoogleMapsApiKeyGetter.getLatLonApiKey()
-        );
+        Tuple<Double> response = null;
+        if(place != null && !place.equals("")){
+            final Call<GeocodingResponse> responseCall = googleMapsApi.getService().getLatLon(
+                    place,
+                    GoogleMapsApiKeyGetter.getLatLonApiKey()
+            );
 
-        try{
-            return new GetLatLonTask(this, responseCall).execute().get();
-        } catch (Exception e){
-            return null;
-            //TODO maybe throw some error?...
+            try{
+                response =  new GetLatLonTask(this, responseCall).execute().get();
+            } catch (Exception e){
+                response = null;
+                //TODO maybe throw some error?...
+            }
         }
+        return response;
     }
 
     private static class GetTimeTask extends AsyncTask<Void, Void, Leg> {
