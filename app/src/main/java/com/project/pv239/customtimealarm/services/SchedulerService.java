@@ -1,12 +1,14 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -94,6 +96,10 @@ public class SchedulerService extends JobIntentService {
                     .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(getResources().getString(R.string.bedtime_notification_body_big_text)
                             .replace("%s1", sleepTime)))
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setOnlyAlertOnce(true)
+                    .setVibrate(new long[] {0, 100, 200, 300})
+                    .setLights(0xff0000, 3000, 3000)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
