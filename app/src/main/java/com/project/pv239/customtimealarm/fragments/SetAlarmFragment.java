@@ -130,12 +130,11 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (getActivity() == null)
-                    return false;
-                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm == null)
-                    return false;
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                if (getActivity() != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if (imm != null)
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
                 return destinationTextChanged(v, false);
             }
         });
