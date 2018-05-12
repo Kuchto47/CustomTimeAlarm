@@ -184,7 +184,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setupTravelMode(){
-        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(),
+        if (getActivity() == null)
+            return;
+        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.travel_mode, android.R.layout.simple_spinner_item);
         travelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTravelMode.setAdapter(travelAdapter);
@@ -203,7 +205,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setupTrafficModel(){
-        final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(),
+        if (getActivity() == null)
+            return;
+        final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.traffic_model, android.R.layout.simple_spinner_item);
         trafficAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTrafficModel.setAdapter(trafficAdapter);
