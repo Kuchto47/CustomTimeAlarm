@@ -2,20 +2,15 @@ package com.project.pv239.customtimealarm.fragments;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -51,7 +45,6 @@ import com.project.pv239.customtimealarm.helpers.objects.Tuple;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
-import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -97,13 +90,40 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY); //TODO:somehow close fragment
+        Bundle bundle = getArguments();
+        if (bundle == null){
+            return null;
+        }
+        mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY);
+        if (mAlarm == null){
+            return null;
+        }
         View view = inflater.inflate(R.layout.fragment_set_alarm, container, false);
         setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
+        setupMap();
+        setupDestination();
+        setupArrivalTime();
+        setupDefaultTime();
+        setupTravelMode();
+        setupTrafficModel();
+        setupMorningRoutine();
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                destinationTextChanged(mDest, true);
+            }
+        });
+        return view;
+    }
+
+    public void setupMap(){
         FragmentManager f = getChildFragmentManager();
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
+    }
+
+    public void setupDestination(){
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -118,6 +138,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                     destinationTextChanged((TextView) v, false);
             }
         });
+    }
+
+    public void setupArrivalTime(){
         mTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +156,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                 dialog.show();
             }
         });
+    }
+
+    public void setupDefaultTime(){
         mTimeDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,7 +174,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                 dialog.show();
             }
         });
-        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getContext(), //TODO: is it okay to use appcontext?
+    }
+
+    public void setupTravelMode(){
+        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(), //TODO: is it okay to use appcontext?
                 R.array.travel_mode, android.R.layout.simple_spinner_item);
         travelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTravelMode.setAdapter(travelAdapter);
@@ -164,6 +193,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
+    }
+
+    public void setupTrafficModel(){
         final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.traffic_model, android.R.layout.simple_spinner_item);
         trafficAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -180,6 +212,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
 
             }
         });
+    }
+
+    public void setupMorningRoutine(){
         mMorningSet.setProgress(mAlarm.getMorningRoutine());
         mMorningSet.setMax(240);
         mMorningView.setText(String.valueOf(mAlarm.getMorningRoutine()));
@@ -198,13 +233,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                destinationTextChanged(mDest, true);
-            }
-        });
-        return view;
     }
 
     public boolean destinationTextChanged(TextView v, boolean closingFragment) {
@@ -257,12 +285,24 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (mTuple != null) {
+            if (mTuple != null) {//if we got location
                 mAlarm.get().setDestination(mTextView.get().getText().toString());
                 final LatLng ll = new LatLng(mTuple.getFirst(), mTuple.getSecond());
                 mAlarm.get().setLatitude(ll.latitude);
                 mAlarm.get().setLongitude(ll.longitude);
-                if (!mClosingFragment) {
+                if (mClosingFragment) {//update db and close fragment
+                    try {
+                        if (mCreate)
+                            new CreateAlarmInDbTask(mAlarm).execute().get();
+                        else
+                            new UpdateAlarmInDbTask(mAlarm).execute().get();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    mProgress.get().dismiss();
+                    mFragment.get().closeFragment();
+                    return;
+                } else {//update map with location
                     mMap.get().getMapAsync(new OnMapReadyCallback() {
                         @Override
                         public void onMapReady(GoogleMap googleMap) {
@@ -271,23 +311,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                             googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
                         }
                     });
-                }else {
-                    if (mAlarm.get().getLatitude() != 0.0 || mAlarm.get().getLongitude() != 0.0) {//what are the odds :)
-                        try {
-                            if (mCreate)
-                                new CreateAlarmInDbTask(mAlarm).execute().get();
-                            else
-                                new UpdateAlarmInDbTask(mAlarm).execute().get();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        mProgress.get().dismiss();
-                        mFragment.get().closeFragment();
-                        return;
-                    }
                 }
             }
-            else {
+            else {//show error
                 mTextView.get().setText(mAlarm.get().getDestination());
                 if (!mClosingFragment){
                     Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
