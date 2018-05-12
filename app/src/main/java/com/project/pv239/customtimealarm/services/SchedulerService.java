@@ -25,6 +25,7 @@ import com.project.pv239.customtimealarm.helpers.AlarmTimeGetter;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class SchedulerService extends JobIntentService {
@@ -88,20 +89,19 @@ public class SchedulerService extends JobIntentService {
             int sleepTimeInMinutes = pref.getInt("sleep_time", 480);
             String sleepTime = this.convertMinutesIntoHours(sleepTimeInMinutes);
             NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(getApplicationContext())
-                    .setSmallIcon(R.drawable.bed)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
-                    .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
-                    .setContentText(getResources().getString(R.string.bedtime_notification_body))
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(getResources().getString(R.string.bedtime_notification_body_big_text)
-                            .replace("%s1", sleepTime)))
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setOnlyAlertOnce(true)
-                    .setVibrate(new long[] {0, 100, 200, 300})
-                    .setLights(0xff0000, 3000, 3000)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true);
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.drawable.bed)
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                            .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
+                            .setContentText(getResources().getString(R.string.bedtime_notification_body))
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(getResources().getString(R.string.bedtime_notification_body_big_text)
+                                            .replace("%s1", sleepTime)))
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setVibrate(new long[] {0, 100, 0, 0})
+                            .setLights(0xff0000, 3000, 3000)
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(1, mBuilder.build());
         }
@@ -110,7 +110,7 @@ public class SchedulerService extends JobIntentService {
     private String convertMinutesIntoHours(int mins){
         int hours = mins/60;
         int minutes = mins % 60;
-        return Integer.toString(hours)+":"+Integer.toString(minutes);
+        return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
     }
 
     public void cancelAlarm(int id){
