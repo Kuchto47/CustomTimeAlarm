@@ -167,11 +167,11 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.ViewHolder
         }
     }
 
-    static class DeleteTaskAsync extends AsyncTask<Void,Void,Void>{
+    public static class DeleteTaskAsync extends AsyncTask<Void,Void,Void>{
 
         private WeakReference<Alarm> mAlarm;
 
-        DeleteTaskAsync(WeakReference<Alarm> a){
+        public DeleteTaskAsync(WeakReference<Alarm> a){
             mAlarm = a;
         }
         @Override

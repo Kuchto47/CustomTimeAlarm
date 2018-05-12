@@ -8,8 +8,9 @@
     <string name="bedtime">Bedtime notification</string>
     <string name="time_to_sleep">Length of sleep</string>
     <string name="snooze_time">Snooze time in minutes</string>
-    <string name="morning_time">Time for morning routine</string>
-    <string name="transport_type">Type of transport</string>
+    <string name="morning_time">Set time for morning routine:</string>
+    <string name="transport_type">Type of transport:</string>
+    <string name="transport_method">Method of time estimation:</string>
     <string name="alarms">Alarms</string>
     <string name="cancellation_dialog_title">App is about to be closed</string>
     <string name="cancellation_dialog_body">
@@ -27,4 +28,6 @@
     <string name="set_arrival_time">Set time of arrival</string>
     <string name="set_default_time">Set time of default alarm</string>
     <string name="default_alarm_info">This time will be used when we fail to get traffic information or location of device</string>
+    <string name="ok_button">Save</string>
+    <string name="min"> min</string>
 </resources>

@@ -13,26 +13,17 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.media.AudioAttributesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.fragments.MainFragment;
-import com.project.pv239.customtimealarm.fragments.SetAlarmFragment;
-import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
@@ -138,14 +129,17 @@ public class WakeUpActivity extends AppCompatActivity{
 
     public static void acquireLock(Context context) {
         PowerManager pm = (PowerManager)  context.getSystemService(Context.POWER_SERVICE);
-        sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "providersLock");
-        sWakeLock.acquire(10000);
-        sWakeLock.setReferenceCounted(false);
+        if (pm != null) {
+            sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "alarm lock");
+            sWakeLock.acquire(10000);
+            sWakeLock.setReferenceCounted(false);
+        }
     }
 
     private static void releaseLock() {
         try {
-            sWakeLock.release();
+            if (sWakeLock != null)
+                sWakeLock.release();
         } catch (Exception e) {
             e.printStackTrace();
         }

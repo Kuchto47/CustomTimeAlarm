@@ -2,6 +2,7 @@ package com.project.pv239.customtimealarm.fragments;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
@@ -10,17 +11,23 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -35,15 +42,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.project.pv239.customtimealarm.App;
 import com.project.pv239.customtimealarm.R;
+import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.objects.Tuple;
-import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,7 +75,9 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @BindView(R.id.morningSet)
     protected SeekBar mMorningSet;
     @BindView(R.id.set_layout)
-    FrameLayout mLayout;
+    LinearLayout mLayout;
+    @BindView(R.id.ok_button)
+    Button mButton;
     private Unbinder mUnbinder;
     private boolean mCreate;
 
@@ -86,15 +94,14 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater,container,savedInstanceState);
         mAlarm = (Alarm) getArguments().getSerializable(ALARM_KEY); //TODO:somehow close fragment
         View view = inflater.inflate(R.layout.fragment_set_alarm, container, false);
+        setHasOptionsMenu(true);
         mUnbinder = ButterKnife.bind(this, view);
         FragmentManager f = getChildFragmentManager();
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
-        if (mCreate) {
-            addFloadingButton();
-        }
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -188,31 +195,23 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        Log.d("FRAGMENT CREATION", "i am fragment for alarm id " + mAlarm.getId());
-        return view;
-    }
-
-    public void addFloadingButton() {
-        FloatingActionButton button = new FloatingActionButton(getContext());
-        button.setImageResource(R.drawable.ic_done_white_24dp);
-        FrameLayout.LayoutParams p = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM + Gravity.END);
-        Resources r = getContext().getResources();
-        int dpMargin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 25, r.getDisplayMetrics());
-        p.setMargins(dpMargin, dpMargin, dpMargin, dpMargin);
-        mLayout.addView(button, p);
-        button.setOnClickListener(new View.OnClickListener() {
+        mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 destinationTextChanged(mDest);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                    new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    if (mCreate)
+                        new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                    else
+                        new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
                     closeFragment();
                 } else {
                     Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
                 }
             }
         });
+        Log.d("FRAGMENT CREATION", "i am fragment for alarm id " + mAlarm.getId());
+        return view;
     }
 
     public boolean destinationTextChanged(TextView v) {
@@ -237,11 +236,38 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (!mCreate && (mAlarm.getLongitude() != 0 || mAlarm.getLatitude() != 0)) {
-            new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!mCreate) {
+            MenuItem delete = menu.getItem(0).setVisible(true);
+            delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle(R.string.delete_dialog_delete)
+                            .setMessage(R.string.delete_dialog_text)
+                            .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    new AlarmsAdapter.DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
+                                    Intent intent = new Intent();
+                                    intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
+                                    intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
+                                    SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+                                    dialog.dismiss();
+                                    closeFragment();
+                                }
+                            })
+                            .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .create()
+                            .show();
+                    return false;
+                }
+            });
         }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public void closeFragment() {
