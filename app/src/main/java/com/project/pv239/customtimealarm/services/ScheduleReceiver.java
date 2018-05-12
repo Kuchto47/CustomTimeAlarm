@@ -22,7 +22,7 @@ public class ScheduleReceiver extends BroadcastReceiver{
         }
         else {//alarm manager called us
             Log.d("==SERVICE==", "alarm manager tick " + intent.getIntExtra(SchedulerService.INTENT_TYPE_KEY, -1));
-            if (intent.getIntExtra(SchedulerService.INTENT_TYPE_KEY, -1) == SchedulerService.WAKE_UP) {
+            if (intent.getIntExtra(SchedulerService.INTENT_TYPE_KEY, -1) == SchedulerService.WAKE_UP) {//we deal with this here so device wont fall asleep
                 Intent i = new Intent(context, WakeUpActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, intent.getIntExtra(SchedulerService.INTENT_ALARM_ID_KEY, -1));
