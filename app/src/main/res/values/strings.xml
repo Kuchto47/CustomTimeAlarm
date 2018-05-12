@@ -30,4 +30,6 @@
     <string name="default_alarm_info">This time will be used when we fail to get traffic information or location of device</string>
     <string name="ok_button">Save</string>
     <string name="min"> min</string>
+    <string name="dest_not_set">Destination have not been set</string>
+    <string name="dest_not_found">Destination was not found</string>
 </resources>

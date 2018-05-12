@@ -106,13 +106,13 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                return destinationTextChanged(v);
+                return destinationTextChanged(v, false);
             }
         });
         mDest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                destinationTextChanged((TextView) v);
+                destinationTextChanged((TextView) v, false);
             }
         });
         mTime.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +198,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                destinationTextChanged(mDest);
+                destinationTextChanged(mDest, true);
                 if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
                     if (mCreate)
                         new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
@@ -206,7 +206,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                         new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
                     closeFragment();
                 } else {
-                    Toast.makeText(getContext(), "Destination not set", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), R.string.dest_not_set, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -214,7 +214,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-    public boolean destinationTextChanged(TextView v) {
+    public boolean destinationTextChanged(TextView v, boolean closingFragment) {
         String text = v.getText().toString();
         GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
         Tuple<Double> t = gm.getLanLonOfPlace(text);
@@ -223,14 +223,22 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             final LatLng ll = new LatLng(t.getFirst(), t.getSecond());
             mAlarm.setLatitude(ll.latitude);
             mAlarm.setLongitude(ll.longitude);
-            mMap.getMapAsync(new OnMapReadyCallback() {
-                @Override
-                public void onMapReady(GoogleMap googleMap) {
-                    googleMap.clear();
-                    googleMap.addMarker(new MarkerOptions().position(ll));
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
-                }
-            });
+            if (!closingFragment) {
+                mMap.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(GoogleMap googleMap) {
+                        googleMap.clear();
+                        googleMap.addMarker(new MarkerOptions().position(ll));
+                        googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
+                    }
+                });
+            }
+        }
+        else {
+            v.setText(mAlarm.getDestination());
+            if (!closingFragment){
+                Toast.makeText(getContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
+            }
         }
         return true;
     }

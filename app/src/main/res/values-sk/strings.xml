@@ -31,4 +31,6 @@
     <string name="default_alarm_info">Tento čas bude použitý ak sa nepodarí získať informácie o premávke alebo polohu telefónu</string>
     <string name="ok_button">Ulož</string>
     <string name="min"> min</string>
+    <string name="dest_not_set">Cieľové miesto nebolo nastavené</string>
+    <string name="dest_not_found">Cieľové miesto nenájdené</string>
 </resources>
