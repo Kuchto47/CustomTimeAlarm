@@ -1,5 +1,6 @@
 package com.project.pv239.customtimealarm.fragments;
 
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,6 +51,7 @@ import com.project.pv239.customtimealarm.helpers.objects.Tuple;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -200,105 +202,100 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 destinationTextChanged(mDest, true);
-                if (mAlarm.getLatitude() != 0.0 || mAlarm.getLongitude() != 0.0) {//what are the odds :)
-                    if (mCreate)
-                        new CreateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-                    else
-                        new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
-                    closeFragment();
-                } else {
-                    Toast.makeText(getContext(), R.string.dest_not_set, Toast.LENGTH_LONG).show();
-                }
             }
         });
-        Log.d("FRAGMENT CREATION", "i am fragment for alarm id " + mAlarm.getId());
         return view;
     }
 
     public boolean destinationTextChanged(TextView v, boolean closingFragment) {
         String text = v.getText().toString();
-        GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-        Tuple<Double> t = gm.getLanLonOfPlace(text);
-        if (t != null) {
-            mAlarm.setDestination(text);
-            final LatLng ll = new LatLng(t.getFirst(), t.getSecond());
-            mAlarm.setLatitude(ll.latitude);
-            mAlarm.setLongitude(ll.longitude);
-            if (!closingFragment) {
-                mMap.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(GoogleMap googleMap) {
-                        googleMap.clear();
-                        googleMap.addMarker(new MarkerOptions().position(ll));
-                        googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
-                    }
-                });
-            }
-        }
-        else {
-            v.setText(mAlarm.getDestination());
-            if (!closingFragment){
-                Toast.makeText(getContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
-            }
+        if (!text.equals(mAlarm.getDestination()) || closingFragment) {
+            ProgressDialog progress = new ProgressDialog(getContext());
+            progress.setTitle(R.string.loading);
+            progress.setMessage(getString(R.string.loading_text));
+            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            progress.show();
+            LoadDestinationTask task = new LoadDestinationTask(new WeakReference<>(v), new WeakReference<>(mAlarm),
+                    new WeakReference<>(mMap), closingFragment, new WeakReference<>(text),
+                    new WeakReference<>(this), mCreate, new WeakReference<>(progress));
+            task.execute();
         }
         return true;
     }
 
-//    public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
-//
-//        private WeakReference<TextView> mTextView;
-//        private WeakReference<String> mText;
-//        private WeakReference<Alarm> mAlarm;
-//        private WeakReference<SupportMapFragment> mMap;
-//        private Tuple<Double> mTuple;
-//        boolean mClosingFragment;
-//
-//        LoadDestinationTask(WeakReference<TextView> textView, WeakReference<Alarm> alarm, WeakReference<SupportMapFragment> map,
-//                            boolean closingFragment, WeakReference<String> text){
-//            mTextView = textView;
-//            mAlarm = alarm;
-//            mMap = map;
-//            mClosingFragment = closingFragment;
-//            mText = text;
-//        }
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            Log.d("==SERVICE==", "task started");
-//            GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-//            Log.d("==SERVICE==", "task" + mText.get());
-//            mTuple = gm.getLanLonOfPlace(mText.get());
-//            Log.d("==SERVICE==", "task ended");
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void aVoid) {
-//            Log.d("==SERVICE==", "onpostexecute");
-//            if (mTuple != null) {
-//                mAlarm.get().setDestination(mTextView.get().getText().toString());
-//                final LatLng ll = new LatLng(mTuple.getFirst(), mTuple.getSecond());
-//                mAlarm.get().setLatitude(ll.latitude);
-//                mAlarm.get().setLongitude(ll.longitude);
-//                if (!mClosingFragment) {
-//                    mMap.get().getMapAsync(new OnMapReadyCallback() {
-//                        @Override
-//                        public void onMapReady(GoogleMap googleMap) {
-//                            googleMap.clear();
-//                            googleMap.addMarker(new MarkerOptions().position(ll));
-//                            googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
-//                        }
-//                    });
-//                }
-//            }
-//            else {
-//                mTextView.get().setText(mAlarm.get().getDestination());
-//                if (!mClosingFragment){
-//                    Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        }
-//    }
+    public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
+
+        private WeakReference<TextView> mTextView;
+        private WeakReference<String> mText;
+        private WeakReference<Alarm> mAlarm;
+        private WeakReference<SupportMapFragment> mMap;
+        private Tuple<Double> mTuple;
+        private WeakReference<SetAlarmFragment> mFragment;
+        private WeakReference<ProgressDialog> mProgress;
+        boolean mClosingFragment;
+        boolean mCreate;
+
+        LoadDestinationTask(WeakReference<TextView> textView, WeakReference<Alarm> alarm, WeakReference<SupportMapFragment> map,
+                            boolean closingFragment, WeakReference<String> text, WeakReference<SetAlarmFragment> fragment,
+                            boolean create, WeakReference<ProgressDialog> progress){
+            mTextView = textView;
+            mAlarm = alarm;
+            mMap = map;
+            mClosingFragment = closingFragment;
+            mText = text;
+            mFragment = fragment;
+            mCreate = create;
+            mProgress = progress;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
+            mTuple = gm.getLatLonOfPlaceSync(mText.get());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            if (mTuple != null) {
+                mAlarm.get().setDestination(mTextView.get().getText().toString());
+                final LatLng ll = new LatLng(mTuple.getFirst(), mTuple.getSecond());
+                mAlarm.get().setLatitude(ll.latitude);
+                mAlarm.get().setLongitude(ll.longitude);
+                if (!mClosingFragment) {
+                    mMap.get().getMapAsync(new OnMapReadyCallback() {
+                        @Override
+                        public void onMapReady(GoogleMap googleMap) {
+                            googleMap.clear();
+                            googleMap.addMarker(new MarkerOptions().position(ll));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
+                        }
+                    });
+                }else {
+                    if (mAlarm.get().getLatitude() != 0.0 || mAlarm.get().getLongitude() != 0.0) {//what are the odds :)
+                        try {
+                            if (mCreate)
+                                new CreateAlarmInDbTask(mAlarm).execute().get();
+                            else
+                                new UpdateAlarmInDbTask(mAlarm).execute().get();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        mProgress.get().dismiss();
+                        mFragment.get().closeFragment();
+                        return;
+                    }
+                }
+            }
+            else {
+                mTextView.get().setText(mAlarm.get().getDestination());
+                if (!mClosingFragment){
+                    Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
+                }
+            }
+            mProgress.get().dismiss();
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
