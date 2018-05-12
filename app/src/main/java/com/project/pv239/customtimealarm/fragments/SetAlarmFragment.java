@@ -177,7 +177,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setupTravelMode(){
-        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(), //TODO: is it okay to use appcontext?
+        final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(),
                 R.array.travel_mode, android.R.layout.simple_spinner_item);
         travelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTravelMode.setAdapter(travelAdapter);
@@ -359,6 +359,8 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void closeFragment() {
+        if (getActivity() == null)
+            return;
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         getActivity().getSupportFragmentManager().popBackStack();
     }
@@ -405,7 +407,6 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         protected Void doInBackground(Void... voids) {
             AlarmFacade alarmFacade = new AlarmFacade();
             long id = alarmFacade.addAlarm(mAlarm.get());
-            Log.d("==SERVICE==", ""+id);
             Intent intent = new Intent();
             intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, (int)id);
             intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CREATED);
