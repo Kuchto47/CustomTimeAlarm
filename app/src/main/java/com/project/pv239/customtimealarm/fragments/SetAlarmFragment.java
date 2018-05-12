@@ -244,6 +244,62 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         return true;
     }
 
+//    public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
+//
+//        private WeakReference<TextView> mTextView;
+//        private WeakReference<String> mText;
+//        private WeakReference<Alarm> mAlarm;
+//        private WeakReference<SupportMapFragment> mMap;
+//        private Tuple<Double> mTuple;
+//        boolean mClosingFragment;
+//
+//        LoadDestinationTask(WeakReference<TextView> textView, WeakReference<Alarm> alarm, WeakReference<SupportMapFragment> map,
+//                            boolean closingFragment, WeakReference<String> text){
+//            mTextView = textView;
+//            mAlarm = alarm;
+//            mMap = map;
+//            mClosingFragment = closingFragment;
+//            mText = text;
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            Log.d("==SERVICE==", "task started");
+//            GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
+//            Log.d("==SERVICE==", "task" + mText.get());
+//            mTuple = gm.getLanLonOfPlace(mText.get());
+//            Log.d("==SERVICE==", "task ended");
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            Log.d("==SERVICE==", "onpostexecute");
+//            if (mTuple != null) {
+//                mAlarm.get().setDestination(mTextView.get().getText().toString());
+//                final LatLng ll = new LatLng(mTuple.getFirst(), mTuple.getSecond());
+//                mAlarm.get().setLatitude(ll.latitude);
+//                mAlarm.get().setLongitude(ll.longitude);
+//                if (!mClosingFragment) {
+//                    mMap.get().getMapAsync(new OnMapReadyCallback() {
+//                        @Override
+//                        public void onMapReady(GoogleMap googleMap) {
+//                            googleMap.clear();
+//                            googleMap.addMarker(new MarkerOptions().position(ll));
+//                            googleMap.animateCamera(CameraUpdateFactory.newLatLng(ll));
+//                        }
+//                    });
+//                }
+//            }
+//            else {
+//                mTextView.get().setText(mAlarm.get().getDestination());
+//                if (!mClosingFragment){
+//                    Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
+//                }
+//            }
+//        }
+//    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (!mCreate) {
