@@ -2,6 +2,7 @@ package com.project.pv239.customtimealarm.fragments;
 
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -128,6 +130,12 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (getActivity() == null)
+                    return false;
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm == null)
+                    return false;
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 return destinationTextChanged(v, false);
             }
         });
