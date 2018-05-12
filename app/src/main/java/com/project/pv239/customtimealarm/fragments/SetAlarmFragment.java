@@ -112,7 +112,8 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         mDest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                destinationTextChanged((TextView) v, false);
+                if (((TextView)v).getText().length() != 0)
+                    destinationTextChanged((TextView) v, false);
             }
         });
         mTime.setOnClickListener(new View.OnClickListener() {
