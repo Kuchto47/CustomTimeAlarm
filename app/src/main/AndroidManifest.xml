@@ -28,6 +28,7 @@
         </activity>
 
         <activity android:name=".activities.WakeUpActivity"
+            android:permission="android.permission.WAKE_LOCK"
             android:showOnLockScreen="true"
             android:screenOrientation="sensorPortrait">
         </activity>

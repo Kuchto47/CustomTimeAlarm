@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -41,6 +42,7 @@ import java.util.concurrent.ExecutionException;
 
 public class WakeUpActivity extends AppCompatActivity{
 
+    private static PowerManager.WakeLock sWakeLock;
     private MediaPlayer mMediaPlayer;
     //fragment cannot be shown over locked screen so we have to use only activity
     @Override
@@ -133,6 +135,28 @@ public class WakeUpActivity extends AppCompatActivity{
     @Override
     public void onBackPressed() {
     }
+
+    public static void acquireLock(Context context) {
+        PowerManager pm = (PowerManager)  context.getSystemService(Context.POWER_SERVICE);
+        sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "providersLock");
+        sWakeLock.acquire(10000);
+        sWakeLock.setReferenceCounted(false);
+    }
+
+    private static void releaseLock() {
+        try {
+            sWakeLock.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+        @Override
+    protected void onResume() {
+        releaseLock();
+        super.onResume();
+    }
+
 
     static class GetAlarms extends AsyncTask<Void,Void,List<Alarm>> {
 

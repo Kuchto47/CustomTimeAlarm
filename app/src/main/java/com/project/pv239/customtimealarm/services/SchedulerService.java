@@ -47,12 +47,6 @@ public class SchedulerService extends JobIntentService {
             case SCHEDULE_ALL:
                 new GetAlarmsTask(new WeakReference<>(this)).execute();
                 break;
-            case WAKE_UP:
-                Intent i = new Intent(this, WakeUpActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra(INTENT_ALARM_ID_KEY, intent.getIntExtra(INTENT_ALARM_ID_KEY,-1));
-                startActivity(i);
-                break;
             case BEDTIME_NOTIFICATION:
                 createNotification();
                 break;
