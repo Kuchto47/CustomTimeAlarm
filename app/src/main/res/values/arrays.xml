@@ -20,7 +20,6 @@
     <string-array name="travel_mode">
         <item>car</item>
         <item>on foot</item>
-        <item>bike</item>
     </string-array>
     <string-array name="traffic_model">
         <item>best guess</item>

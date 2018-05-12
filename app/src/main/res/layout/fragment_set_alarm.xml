@@ -80,7 +80,6 @@
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000"
                         android:text="@string/transport_type"/>
                     <Spinner
                         android:layout_width="wrap_content"
@@ -103,8 +102,6 @@
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textColor="#000000"
-                        android:textSize="15sp"
                         android:text="@string/transport_method"/>
                     <Spinner
                         android:layout_width="wrap_content"
@@ -145,8 +142,7 @@
                         android:textSize="12sp"
                         android:text="@string/min"
                         android:paddingEnd="12dp"
-                        android:textColor="#000000"
-                        android:id="@+id/morning"/>
+                        android:textColor="#000000"/>
                 </LinearLayout>
                 <Button
                     android:layout_width="match_parent"

@@ -7,8 +7,6 @@ public class TravelModeToString {
         switch (travelMode){
             case TravelMode.WALKING:
                 return "walking";
-            case TravelMode.BICYCLING:
-                return "bicycling";
             default:
                 return "driving";
         }

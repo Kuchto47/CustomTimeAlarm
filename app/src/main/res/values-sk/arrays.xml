@@ -3,7 +3,6 @@
     <string-array name="travel_mode">
         <item>autom</item>
         <item>pešo</item>
-        <item>na bicykli</item>
     </string-array>
     <string-array name="traffic_model">
         <item>najlepší odhad</item>
