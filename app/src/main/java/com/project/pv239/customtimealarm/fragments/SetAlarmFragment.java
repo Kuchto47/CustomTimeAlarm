@@ -196,7 +196,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void setupTrafficModel(){
-        final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(getContext(),
+        final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(App.getInstance().getApplicationContext(),
                 R.array.traffic_model, android.R.layout.simple_spinner_item);
         trafficAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTrafficModel.setAdapter(trafficAdapter);
@@ -330,7 +330,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    new AlertDialog.Builder(getContext())
+                    new AlertDialog.Builder(App.getInstance().getApplicationContext())
                             .setTitle(R.string.delete_dialog_delete)
                             .setMessage(R.string.delete_dialog_text)
                             .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
