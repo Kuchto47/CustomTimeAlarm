@@ -55,7 +55,7 @@ public class Alarm implements Serializable{
     private int morningRoutine;
 
     public Alarm() {
-        this("", 0, 0, 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, false, 0);
+        this("", 0, 0, 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, true, 30);
     }
 
     public Alarm(String destination, int hourArrival, int minuteArrival, int hourDefault, int minuteDefault, int trafficModel, int travelMode,
