@@ -57,7 +57,7 @@ public class MainFragment extends Fragment{
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Alarm alarm = new Alarm("",0,0,0,0,0,0,0,0,true,30);
+                Alarm alarm = new Alarm();
                 SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,true);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 if (fragmentManager != null) {
