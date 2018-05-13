@@ -258,6 +258,10 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
                     new WeakReference<>(mMap), closingFragment, new WeakReference<>(text),
                     new WeakReference<>(this), mCreate, new WeakReference<>(progress));
             task.execute();
+        } else {
+            if (mAlarm.getLongitude() != 0 && mAlarm.getLatitude() != 0){
+                v.setText(mAlarm.getDestination());
+            }
         }
         return true;
     }
