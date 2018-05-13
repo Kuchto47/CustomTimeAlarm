@@ -59,7 +59,7 @@ public class WakeUpActivity extends AppCompatActivity{
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes attributes = new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_ALARM)//for some unknown reason not working
+                    .setUsage(AudioAttributes.USAGE_ALARM)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setLegacyStreamType(AudioManager.STREAM_ALARM)
                     .build();

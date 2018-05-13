@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Budík</string>
+    <string name="back">Späť</string>
     <string name="settings">Nastavenia</string>
     <string name="destination">Cieľ: </string>
     <string name="time_of_arrival">Čas príchodu: </string>

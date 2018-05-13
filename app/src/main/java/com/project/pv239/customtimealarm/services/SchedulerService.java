@@ -1,7 +1,6 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,7 +17,6 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.activities.WakeUpActivity;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.AlarmTimeGetter;

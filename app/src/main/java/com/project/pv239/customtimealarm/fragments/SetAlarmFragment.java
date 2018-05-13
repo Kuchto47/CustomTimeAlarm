@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -86,6 +86,26 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         fragment.setArguments(bundle);
         fragment.mCreate = create;
         return fragment;
+    }
+
+    private AppCompatActivity getActiveActivity() {
+        return (AppCompatActivity)getActivity();
+    }
+
+    private void toggleHomeButton(boolean toggle){
+        this.getActiveActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(toggle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.toggleHomeButton(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.toggleHomeButton(false);
     }
 
     @Override
@@ -343,27 +363,28 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    new AlertDialog.Builder(App.getInstance().getApplicationContext())
-                            .setTitle(R.string.delete_dialog_delete)
-                            .setMessage(R.string.delete_dialog_text)
-                            .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    new AlarmsAdapter.DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
-                                    Intent intent = new Intent();
-                                    intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
-                                    intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
-                                    SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
-                                    dialog.dismiss();
-                                    closeFragment();
-                                }
-                            })
-                            .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .create()
-                            .show();
+                    if (getContext() != null)
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.delete_dialog_delete)
+                                .setMessage(R.string.delete_dialog_text)
+                                .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        new AlarmsAdapter.DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
+                                        Intent intent = new Intent();
+                                        intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
+                                        intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
+                                        SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+                                        dialog.dismiss();
+                                        closeFragment();
+                                    }
+                                })
+                                .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
                     return false;
                 }
             });
@@ -376,6 +397,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             return;
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         getActivity().getSupportFragmentManager().popBackStack();
+        this.toggleHomeButton(false);
     }
 
     @Override
