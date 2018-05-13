@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -71,6 +72,11 @@ public class MainFragment extends Fragment{
         });
         new LoadAlarmsTask(new WeakReference<>(mAdapter)).execute();
         return view;
+    }
+
+    private void showHomeButton() {
+        AppCompatActivity activity = (AppCompatActivity)getActivity();
+        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onItemClicked(Alarm alarm) {

@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -86,6 +87,26 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         fragment.setArguments(bundle);
         fragment.mCreate = create;
         return fragment;
+    }
+
+    private AppCompatActivity getActiveActivity() {
+        return (AppCompatActivity)getActivity();
+    }
+
+    private void toggleHomeButton(boolean toggle){
+        this.getActiveActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(toggle);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.toggleHomeButton(true);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        this.toggleHomeButton(false);
     }
 
     @Override
@@ -376,6 +397,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             return;
         getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
         getActivity().getSupportFragmentManager().popBackStack();
+        this.toggleHomeButton(false);
     }
 
     @Override

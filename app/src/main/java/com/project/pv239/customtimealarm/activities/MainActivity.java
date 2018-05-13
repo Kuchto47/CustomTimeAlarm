@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
+import com.project.pv239.customtimealarm.fragments.SetAlarmFragment;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
@@ -36,25 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     SchedulerService.enqueueWork(getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, i);
                 }
         });
-        //TODO test log
-        /*new AsyncTask<Void, Void, Void>() {
-            protected Void doInBackground(Void... voids) {
-                AlarmFacade alarmFacade = new AlarmFacade();
-                alarmFacade.addAlarm(new Alarm("TestDest", "12:47", TrafficModel.BEST_GUESS, TravelMode.DRIVING,45,45));
-                List<Alarm> obts = alarmFacade.getAllAlarms();
-                for (Alarm obt : obts) {
-                    Log.d("== ALARM ==", obt.getDestination()+" "+obt.getTimeOfArrival()+" "+obt.getTrafficModel()+" "+obt.getTravelMode());
-                }
-                return null;
-            }
-        }.execute();*/
         PermissionChecker.getLocationPermissionIfNotGranted(this);
-        //TODO: tests below :)
-        /*Log.d("==TEST==", PlacesProvider.getOrigin());
-        GoogleMapsApi g = new GoogleMapsApi();
-        GoogleMapsApiInformationGetter gm = new GoogleMapsApiInformationGetter();
-        Alarm a = new Alarm(PlacesProvider.getDestination("kralovianky 71"), "1525173860", TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d);
-        Log.d("==TEST==", String.valueOf(gm.getTimeToDestinationInSeconds(a)));*/
     }
 
     @Override
@@ -98,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                                 MainFragment.newInstance(),
                                 MainFragment.class.getSimpleName())
                         .commit();
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             }
         }
     }
@@ -110,8 +94,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.settings)
-            startActivity(new Intent(this, SettingsActivity.class));
+        switch(item.getItemId()) {
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            case android.R.id.home:
+                SetAlarmFragment frag = (SetAlarmFragment) getSupportFragmentManager().findFragmentByTag(SetAlarmFragment.class.getSimpleName());
+                frag.closeFragment();
+        }
         return super.onOptionsItemSelected(item);
     }
 }
