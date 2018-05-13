@@ -330,9 +330,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             }
             else {//show error
                 mTextView.get().setText(mAlarm.get().getDestination());
-                if (!mClosingFragment){
-                    Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
-                }
+                Toast.makeText(App.getInstance().getApplicationContext(), R.string.dest_not_found, Toast.LENGTH_LONG).show();
             }
             mProgress.get().dismiss();
         }
