@@ -363,27 +363,28 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    new AlertDialog.Builder(App.getInstance().getApplicationContext())
-                            .setTitle(R.string.delete_dialog_delete)
-                            .setMessage(R.string.delete_dialog_text)
-                            .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    new AlarmsAdapter.DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
-                                    Intent intent = new Intent();
-                                    intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
-                                    intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
-                                    SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
-                                    dialog.dismiss();
-                                    closeFragment();
-                                }
-                            })
-                            .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .create()
-                            .show();
+                    if (getContext() != null)
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.delete_dialog_delete)
+                                .setMessage(R.string.delete_dialog_text)
+                                .setPositiveButton(R.string.delete_dialog_delete, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        new AlarmsAdapter.DeleteTaskAsync(new WeakReference<>(mAlarm)).execute();
+                                        Intent intent = new Intent();
+                                        intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
+                                        intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.ALARM_CANCELLED);
+                                        SchedulerService.enqueueWork(App.getInstance().getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, intent);
+                                        dialog.dismiss();
+                                        closeFragment();
+                                    }
+                                })
+                                .setNegativeButton(R.string.delete_dialog_cancel, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .create()
+                                .show();
                     return false;
                 }
             });
