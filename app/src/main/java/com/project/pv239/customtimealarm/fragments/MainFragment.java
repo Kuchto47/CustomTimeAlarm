@@ -74,11 +74,6 @@ public class MainFragment extends Fragment{
         return view;
     }
 
-    private void showHomeButton() {
-        AppCompatActivity activity = (AppCompatActivity)getActivity();
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
     public void onItemClicked(Alarm alarm) {
         SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,false);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
