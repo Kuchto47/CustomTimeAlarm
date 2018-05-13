@@ -27,6 +27,7 @@ import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -55,14 +56,16 @@ public class WakeUpActivity extends AppCompatActivity{
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
-        mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
+        this.setVolumeControlStream(AudioManager.STREAM_ALARM);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+            AudioAttributes attributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_ALARM)//for some unknown reason not working
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                     .setLegacyStreamType(AudioManager.STREAM_ALARM)
-                    .build());
+                    .build();
+            mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock,attributes,AudioManager.AUDIO_SESSION_ID_GENERATE);
         }else {
+            mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
         }
         mMediaPlayer.setLooping(true);
@@ -112,6 +115,7 @@ public class WakeUpActivity extends AppCompatActivity{
                                 }
                             }
                             mMediaPlayer.stop();
+                            mMediaPlayer.release();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 finishAndRemoveTask();
                             }else {
