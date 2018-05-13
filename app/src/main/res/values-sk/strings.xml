@@ -34,4 +34,11 @@
     <string name="dest_not_found">Cieľ nenájdený</string>
     <string name="loading">Načítavam</string>
     <string name="loading_text">Prosím počkajte kým naše cvičené opice nájdu váš cieľ :).</string>
+    <string name="bedtime_notification_title">Je čas ísť spať!</string>
+    <string name="bedtime_notification_body">
+        Choď si ľahnúť, dobre sa vyspi&#8230;
+    </string>
+    <string name="bedtime_notification_body_big_text">
+        Choď si ľahnúť dobre sa vyspi. Ak tak urobíš teraz, budeš spať požadovaných %s1 hodín.
+    </string>
 </resources>

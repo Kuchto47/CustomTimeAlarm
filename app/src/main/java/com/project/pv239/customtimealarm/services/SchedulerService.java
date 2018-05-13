@@ -1,11 +1,14 @@
 package com.project.pv239.customtimealarm.services;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -14,14 +17,15 @@ import android.support.v4.app.JobIntentService;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.activities.WakeUpActivity;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.AlarmTimeGetter;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class SchedulerService extends JobIntentService {
@@ -48,7 +52,7 @@ public class SchedulerService extends JobIntentService {
                 new GetAlarmsTask(new WeakReference<>(this)).execute();
                 break;
             case BEDTIME_NOTIFICATION:
-                createNotification();
+                createBedTimeNotification();
                 break;
             case ALARM_CANCELLED:
                 cancelAlarm(intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
@@ -72,21 +76,39 @@ public class SchedulerService extends JobIntentService {
         }
     }
 
-    public void createNotification() {
-//        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-//        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
-//        if(shouldShowNotification){
-//            NotificationCompat.Builder mBuilder =
-//            new NotificationCompat.Builder(getApplicationContext())
-//                    .setContentTitle("My notification")
-//                    .setContentText("Hello World!");
-//            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//            mNotificationManager.notify(1, mBuilder.build());
-//        }
+    public void createBedTimeNotification() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean shouldShowNotification = pref.getBoolean("bedtime", false);
+        if(shouldShowNotification){
+            int sleepTimeInMinutes = pref.getInt("sleep_time", 480);
+            String sleepTime = this.convertMinutesIntoHours(sleepTimeInMinutes);
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.drawable.bed)
+                            .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher))
+                            .setContentTitle(getResources().getString(R.string.bedtime_notification_title))
+                            .setContentText(getResources().getString(R.string.bedtime_notification_body))
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(getResources().getString(R.string.bedtime_notification_body_big_text)
+                                            .replace("%s1", sleepTime)))
+                            .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                            .setVibrate(new long[] {0, 100, 0, 0})
+                            .setLights(0xff0000, 3000, 3000)
+                            .setPriority(NotificationCompat.PRIORITY_HIGH)
+                            .setAutoCancel(true);
+            NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(1, mBuilder.build());
+        }
+    }
+
+    private String convertMinutesIntoHours(int mins){
+        int hours = mins/60;
+        int minutes = mins % 60;
+        return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
     }
 
     public void cancelAlarm(int id){
-        Log.d("==SERVICE==", "alarm cancelled " + id);
+        Log.d("==SERVICE==", "alarm with id " + id + " cancelling");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             Intent myIntent = new Intent(getApplicationContext(), ScheduleReceiver.class);
@@ -135,6 +157,7 @@ public class SchedulerService extends JobIntentService {
             Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
         }
         else {
+            Log.d("==SERVICE==", "calling cancelAlarm() for Alarm: " + alarm.toString());
             cancelAlarm(alarm.getId());
         }
     }

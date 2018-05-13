@@ -33,4 +33,11 @@
     <string name="dest_not_found">Destination was not found</string>
     <string name="loading">Loading</string>
     <string name="loading_text">Please wait while our monkeys find your destination :).</string>
+    <string name="bedtime_notification_title">Time for bed!</string>
+    <string name="bedtime_notification_body">
+        Go to bed and sleep well&#8230;
+    </string>
+    <string name="bedtime_notification_body_big_text">
+        Go to bed and sleep well. If you do it now, you will meet required %s1 hours to sleep.
+    </string>
 </resources>
