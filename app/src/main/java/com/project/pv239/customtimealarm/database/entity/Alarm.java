@@ -22,11 +22,17 @@ public class Alarm implements Serializable{
     @ColumnInfo(name = "destination")
     private String destination;
 
-    @ColumnInfo(name = "hour")
+    @ColumnInfo(name = "hour_arrival")
     private int hourOfArrival;
 
-    @ColumnInfo(name = "minute")
+    @ColumnInfo(name = "minute_arrival")
     private int minuteOfHourOfArrival;
+
+    @ColumnInfo(name = "hour_default")
+    private int hourOfDefaultAlarm;
+
+    @ColumnInfo(name = "minute_default")
+    private int minuteOfHourOfDefaultAlarm;
 
     @ColumnInfo(name = "traffic_model")
     @TrafficModel
@@ -49,20 +55,22 @@ public class Alarm implements Serializable{
     private int morningRoutine;
 
     public Alarm() {
-        this("", 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, false, 0);
+        this("", 0, 0, 0, 0, TrafficModel.BEST_GUESS, TravelMode.DRIVING, 0d, 0d, true, 30);
     }
 
-    public Alarm(String destination, int hour, int minute, int trafficModel, int travelMode,
+    public Alarm(String destination, int hourArrival, int minuteArrival, int hourDefault, int minuteDefault, int trafficModel, int travelMode,
                  double latitude, double longitude, boolean on, int morningRoutine){
         this.destination = destination;
-        this.hourOfArrival = hour;
-        this.minuteOfHourOfArrival = minute;
+        this.hourOfArrival = hourArrival;
+        this.minuteOfHourOfArrival = minuteArrival;
         this.trafficModel = trafficModel;
         this.travelMode = travelMode;
         this.latitude = latitude;
         this.longitude = longitude;
         this.on = on;
         this.morningRoutine = morningRoutine;
+        this.hourOfDefaultAlarm = hourDefault;
+        this.minuteOfHourOfDefaultAlarm = minuteDefault;
     }
 
     public void setId(int id){
@@ -103,6 +111,30 @@ public class Alarm implements Serializable{
 
     public long getTimeOfArrivalInSeconds() {
         return TimeHelper.getTimeInSeconds(hourOfArrival, minuteOfHourOfArrival);
+    }
+
+    public int getHourOfDefaultAlarm() {
+        return hourOfDefaultAlarm;
+    }
+
+    public void setHourOfDefaultAlarm(int hourOfDefaultAlarm) {
+        this.hourOfDefaultAlarm = hourOfDefaultAlarm;
+    }
+
+    public int getMinuteOfHourOfDefaultAlarm() {
+        return minuteOfHourOfDefaultAlarm;
+    }
+
+    public void setMinuteOfHourOfDefaultAlarm(int minuteOfHourOfDefaultAlarm) {
+        this.minuteOfHourOfDefaultAlarm = minuteOfHourOfDefaultAlarm;
+    }
+
+    public String getTimeOfDefaultAlarm(){
+        return String.format(Locale.getDefault(),"%02d:%02d", hourOfDefaultAlarm, minuteOfHourOfDefaultAlarm);
+    }
+
+    public long getTimeOfDefaultAlarmInSeconds() {
+        return TimeHelper.getTimeInSeconds(hourOfDefaultAlarm, minuteOfHourOfDefaultAlarm);
     }
 
     public int getTrafficModel() {
@@ -183,6 +215,7 @@ public class Alarm implements Serializable{
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getHourOfArrival()+ ":"+ this.getMinuteOfHourOfArrival()+" "+this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
+        return this.getDestination()+" "+this.getTimeOfArrival()+" " + this.getTimeOfDefaultAlarm() + " " +
+                this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
     }
 }

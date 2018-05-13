@@ -44,22 +44,20 @@ public class GoogleMapsApiInformationGetter {
         }
     }
 
-    public Tuple<Double> getLanLonOfPlace(String place){
-        Tuple<Double> response = null;
-        if(place != null && !place.equals("")){
-            final Call<GeocodingResponse> responseCall = googleMapsApi.getService().getLatLon(
-                    place,
-                    GoogleMapsApiKeyGetter.getLatLonApiKey()
-            );
-
-            try{
-                response =  new GetLatLonTask(this, responseCall).execute().get();
-            } catch (Exception e){
-                response = null;
-                //TODO maybe throw some error?...
-            }
+    public Tuple<Double> getLatLonOfPlaceSync(String place){
+        final Call<GeocodingResponse> responseCall = googleMapsApi.getService().getLatLon(
+                place,
+                GoogleMapsApiKeyGetter.getLatLonApiKey()
+        );
+        try{
+            Response<GeocodingResponse> gResponse = responseCall.execute();
+            GeocodingResponse responseBody = gResponse.body();
+            Double lat = responseBody.results[0].geometry.location.lat;
+            Double lng = responseBody.results[0].geometry.location.lng;
+            return new Tuple<>(lat, lng);
+        } catch (Exception e) {
+            return null;//TODO we might want to avoid returning nulls
         }
-        return response;
     }
 
     private static class GetTimeTask extends AsyncTask<Void, Void, Leg> {
@@ -79,29 +77,6 @@ public class GoogleMapsApiInformationGetter {
                 return responseBody.routes[0].legs[0];
             } catch (Exception e) {
                 return null;
-            }
-        }
-    }
-
-    private static class GetLatLonTask extends AsyncTask<Void, Void, Tuple<Double>> {
-        private WeakReference<GoogleMapsApiInformationGetter> mContext;
-        private Call<GeocodingResponse> responseCall;
-
-        private GetLatLonTask(GoogleMapsApiInformationGetter context, Call<GeocodingResponse> responseCall){
-            this.mContext = new WeakReference<>(context);
-            this.responseCall = responseCall;
-        }
-
-        @Override
-        protected Tuple<Double> doInBackground(Void... voids) {
-            try{
-                Response<GeocodingResponse> gResponse = responseCall.execute();
-                GeocodingResponse responseBody = gResponse.body();
-                Double lat = responseBody.results[0].geometry.location.lat;
-                Double lng = responseBody.results[0].geometry.location.lng;
-                return new Tuple<>(lat, lng);
-            } catch (Exception e) {
-                return null;//TODO we might want to avoid returning nulls
             }
         }
     }

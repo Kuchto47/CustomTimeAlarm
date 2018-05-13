@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <!--allowBackup should be changed to true when DB wont be changing anymore-->
@@ -29,6 +30,7 @@
         </activity>
 
         <activity android:name=".activities.WakeUpActivity"
+            android:permission="android.permission.WAKE_LOCK"
             android:showOnLockScreen="true"
             android:screenOrientation="sensorPortrait">
         </activity>
@@ -44,6 +46,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
             </intent-filter>
         </receiver>
 

@@ -2,9 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:title="@string/delete_dialog_delete"
+        android:id="@+id/delete"
+        app:showAsAction="ifRoom"
+        android:visible="false"
+        android:icon="@drawable/ic_menu_delete" />
+    <item
         android:title="@string/settings"
         android:id="@+id/settings"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/ic_settings_white_24dp"
-    />
+        android:icon="@drawable/ic_settings_white_24dp" />
 </menu>

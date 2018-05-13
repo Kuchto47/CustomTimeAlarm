@@ -51,12 +51,6 @@ public class SchedulerService extends JobIntentService {
             case SCHEDULE_ALL:
                 new GetAlarmsTask(new WeakReference<>(this)).execute();
                 break;
-            case WAKE_UP:
-                Intent i = new Intent(this, WakeUpActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.putExtra(INTENT_ALARM_ID_KEY, intent.getIntExtra(INTENT_ALARM_ID_KEY,-1));
-                startActivity(i);
-                break;
             case BEDTIME_NOTIFICATION:
                 createBedTimeNotification();
                 break;
@@ -116,39 +110,34 @@ public class SchedulerService extends JobIntentService {
     public void cancelAlarm(int id){
         Log.d("==SERVICE==", "alarm with id " + id + " cancelling");
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent myIntent = new Intent(getApplicationContext(), ScheduleReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                getApplicationContext(), id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.cancel(pendingIntent);
-        pendingIntent = PendingIntent.getBroadcast(
-                getApplicationContext(), id + NOTIFICATION_ID, myIntent, 0);
-        alarmManager.cancel(pendingIntent);
-        Log.d("==SERVICE==", "alarm with id " + id + " cancelled");
+        if (alarmManager != null) {
+            Intent myIntent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+            pendingIntent = PendingIntent.getBroadcast(
+                    getApplicationContext(), id + NOTIFICATION_ID, myIntent, 0);
+            alarmManager.cancel(pendingIntent);
+        }
     }
 
     public void scheduleAlarm(Alarm alarm) {
         if (alarm.isOn()) {
             Log.d("==SERVICE==", "alarm scheduling " + alarm.getId());
             long alarmTime = AlarmTimeGetter.getAlarmTimeInMilliSeconds(alarm);
-            if(alarmTime == -1){
-                Log.d("==ALARMTIME==", "equal to -1, we should probably set default wakeuptime here.");
-            }
             Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + " " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
             if (timeToAlarm <= MINUTE*11) {
-                Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 10 MINS");
                 intent.putExtra(INTENT_TYPE_KEY, WAKE_UP);
                 intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                 setAlarmManager(alarm.getId(), intent, alarmTime);
             } else {
                 if (timeToAlarm > HOUR + MINUTE*5) {
-                    Log.d("==SERVICE==", "TIME TO ALARM MORE THAN 1 HOUR CHECK IN " + (alarmTime - HOUR));
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                     setAlarmManager(alarm.getId(), intent, alarmTime - HOUR);
                 } else {
-                    Log.d("==SERVICE==", "TIME TO ALARM LESS THAN 1 HOUR CHECK IN " + (alarmTime - MINUTE*10));
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                     setAlarmManager(alarm.getId(), intent, alarmTime - MINUTE*10);
@@ -178,14 +167,15 @@ public class SchedulerService extends JobIntentService {
     private void setAlarmManager(int alarmId, Intent intent, long mills){
         PendingIntent pIntent = PendingIntent.getBroadcast(this, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        am.cancel(pIntent);
+        if (am != null) {
+            am.cancel(pIntent);
 
-        Log.d("==SERVICE==", "set with intent " + intent.getIntExtra(INTENT_TYPE_KEY, -1));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mills, pIntent);
-        }
-        else {
-            am.setExact(AlarmManager.RTC_WAKEUP, mills, pIntent);
+            Log.d("==SERVICE==", "set with intent " + intent.getIntExtra(INTENT_TYPE_KEY, -1));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, mills, pIntent);
+            } else {
+                am.setExact(AlarmManager.RTC_WAKEUP, mills, pIntent);
+            }
         }
     }
 

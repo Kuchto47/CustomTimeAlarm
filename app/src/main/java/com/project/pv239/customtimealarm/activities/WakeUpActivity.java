@@ -13,34 +13,28 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.media.AudioAttributesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.fragments.MainFragment;
-import com.project.pv239.customtimealarm.fragments.SetAlarmFragment;
-import com.project.pv239.customtimealarm.fragments.SettingsFragment;
 import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class WakeUpActivity extends AppCompatActivity{
 
+    private static PowerManager.WakeLock sWakeLock;
     private MediaPlayer mMediaPlayer;
     //fragment cannot be shown over locked screen so we have to use only activity
     @Override
@@ -55,17 +49,23 @@ public class WakeUpActivity extends AppCompatActivity{
             setShowWhenLocked(true);
             setTurnScreenOn(true);
             KeyguardManager m = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-            m.requestDismissKeyguard(this, null);
+            if (m != null)
+                m.requestDismissKeyguard(this, null);
         }
         else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
-        mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
+        this.setVolumeControlStream(AudioManager.STREAM_ALARM);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mMediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
-                    .setUsage(AudioAttributes.USAGE_MEDIA).build());
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)//for some unknown reason not working
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
+                    .build();
+            mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock,attributes,AudioManager.AUDIO_SESSION_ID_GENERATE);
         }else {
+            mMediaPlayer = MediaPlayer.create(this,R.raw.alarm_clock);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
         }
         mMediaPlayer.setLooping(true);
@@ -107,13 +107,15 @@ public class WakeUpActivity extends AppCompatActivity{
                             AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                             int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
-                            }
-                            else {
-                                am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                            if (am != null) {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                                } else {
+                                    am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                                }
                             }
                             mMediaPlayer.stop();
+                            mMediaPlayer.release();
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 finishAndRemoveTask();
                             }else {
@@ -124,6 +126,36 @@ public class WakeUpActivity extends AppCompatActivity{
                 }
             }
     }
+
+    @Override
+    public void onBackPressed() {
+    }
+
+    public static void acquireLock(Context context) {
+        PowerManager pm = (PowerManager)  context.getSystemService(Context.POWER_SERVICE);
+        if (pm != null) {
+            sWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "alarm lock");
+            sWakeLock.acquire(10000);
+            sWakeLock.setReferenceCounted(false);
+        }
+    }
+
+    private static void releaseLock() {
+        try {
+            if (sWakeLock != null)
+                sWakeLock.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+        @Override
+    protected void onResume() {
+        releaseLock();
+        super.onResume();
+    }
+
+
     static class GetAlarms extends AsyncTask<Void,Void,List<Alarm>> {
 
         @Override

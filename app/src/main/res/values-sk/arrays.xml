@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="travel_mode">
+        <item>autom</item>
+        <item>pešo</item>
+    </string-array>
+    <string-array name="traffic_model">
+        <item>najlepší odhad</item>
+        <item>optimistický odhad</item>
+        <item>pessimistický odhad</item>
+    </string-array>
+</resources>
