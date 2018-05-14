@@ -9,10 +9,8 @@ import com.project.pv239.customtimealarm.api.model.geocoding.GeocodingResponse;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
 import com.project.pv239.customtimealarm.helpers.converters.TravelModeToString;
-import com.project.pv239.customtimealarm.helpers.objects.Tuple;
-import com.project.pv239.customtimealarm.helpers.places.PlacesProvider;
-
-import java.lang.ref.WeakReference;
+import com.project.pv239.customtimealarm.helpers.Tuple;
+import com.project.pv239.customtimealarm.helpers.PlacesProvider;
 
 import retrofit2.Call;
 import retrofit2.Response;

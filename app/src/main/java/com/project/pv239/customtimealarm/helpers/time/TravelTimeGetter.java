@@ -1,6 +1,4 @@
-package com.project.pv239.customtimealarm.helpers;
-
-import android.util.Log;
+package com.project.pv239.customtimealarm.helpers.time;
 
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.api.model.directions.Leg;
@@ -21,8 +19,6 @@ public class TravelTimeGetter {
         if(initialTravelTime != -1) {
             int approximatedTravelTime = TravelTimeGetter.secondCall(api, alarm, initialTravelTime);
             if(approximatedTravelTime != -1) {
-                //boolean isThirdCallNeeded = TravelTimeGetter.isThirdCallNeeded(initialTravelTime, approximatedTravelTime, alarm);
-                //return isThirdCallNeeded ? TravelTimeGetter.thirdCall(api, alarm, approximatedTravelTime) : approximatedTravelTime;
                 return approximatedTravelTime;
             }
         }
@@ -49,24 +45,6 @@ public class TravelTimeGetter {
             return response.duration.value;
         }
         return -1;
-    }
-
-    private static boolean isThirdCallNeeded(int initialTravelTime, int approximatedTravelTime, Alarm alarm) {
-        //TODO improve logic here so it amkes sense to use it.
-        long initTravelTime = (long)initialTravelTime;
-        long travelTime = (long)approximatedTravelTime;
-        long arrivalTime = alarm.getTimeOfArrivalInSeconds();
-        long oldDepartureTime = arrivalTime-initTravelTime;
-        long newDepartureTime = arrivalTime-travelTime;
-        //Ak je rozdiel vacsi ako minuta tak to uz povazuje kod za velky rozdiel a este to upresni
-        return newDepartureTime-oldDepartureTime > 60 || newDepartureTime-oldDepartureTime < -60;
-    }
-
-    private static int thirdCall(GoogleMapsApiInformationGetter api, Alarm alarm, int approximatedTravelTime) {
-        long oldTravelTime = (long)approximatedTravelTime;
-        long arrivalTime = alarm.getTimeOfArrivalInSeconds();
-        long departureTime = arrivalTime-oldTravelTime;
-        return TravelTimeGetter.callApi(api, alarm, departureTime).duration_in_traffic.value;
     }
 
     private static Leg callApi(GoogleMapsApiInformationGetter api, Alarm alarm, long departureTime){
