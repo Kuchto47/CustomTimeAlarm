@@ -20,14 +20,13 @@ import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.time.AlarmTimeGetter;
+import com.project.pv239.customtimealarm.helpers.time.TimeToString;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 public class SchedulerService extends JobIntentService {
-
     public static final int SCHEDULE_ALL = 0;
     public static final int ALARM_CANCELLED = 1;
     public static final int ALARM_CREATED = 2;
@@ -41,6 +40,9 @@ public class SchedulerService extends JobIntentService {
     private static final int MINUTE = 1000*60;
     private static final int HOUR = 1000*60*60;
     private static final int NOTIFICATION_ID = 100000;
+    private static final int EIGHT_HOURS_IN_MINUTES = 60*8;
+    private static final int MINUTE_IN_MILLISECOND = 60*1000;
+
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
@@ -62,11 +64,11 @@ public class SchedulerService extends JobIntentService {
                 try {
                     list = new GetAlarms().execute().get();
                 }catch (InterruptedException|ExecutionException e){
-                    Log.e("EX","load alarm failed");
+                    Log.e("EX","Loading of alarms failed! "+e.getMessage());
                 }
                 if (list != null)
                     for(Alarm a : list) {
-                        Log.d("==SERVICE==", "" + a.getId() +  " "+ intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
+                        Log.d("==SERVICE==", "Alarm: " + a.getId() +  " "+ intent.getIntExtra(INTENT_ALARM_ID_KEY, -1));
                         if (a.getId() == intent.getIntExtra(INTENT_ALARM_ID_KEY, -1))
                             scheduleAlarm(a);
                     }
@@ -78,8 +80,9 @@ public class SchedulerService extends JobIntentService {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean shouldShowNotification = pref.getBoolean("bedtime", false);
         if(shouldShowNotification){
+            int redColor = 0xff0000;
             int sleepTimeInMinutes = pref.getInt("sleep_time", 480);
-            String sleepTime = this.convertMinutesIntoHours(sleepTimeInMinutes);
+            String sleepTime = TimeToString.convert(sleepTimeInMinutes);
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(getApplicationContext())
                             .setSmallIcon(R.drawable.bed)
@@ -91,18 +94,12 @@ public class SchedulerService extends JobIntentService {
                                             .replace("%s1", sleepTime)))
                             .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                             .setVibrate(new long[] {0, 100, 0, 0})
-                            .setLights(0xff0000, 3000, 3000)
+                            .setLights(redColor, 3000, 3000)
                             .setPriority(NotificationCompat.PRIORITY_HIGH)
                             .setAutoCancel(true);
             NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(1, mBuilder.build());
         }
-    }
-
-    private String convertMinutesIntoHours(int mins){
-        int hours = mins/60;
-        int minutes = mins % 60;
-        return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes);
     }
 
     public void cancelAlarm(int id){
@@ -126,23 +123,23 @@ public class SchedulerService extends JobIntentService {
             Log.d("==SERVICE==", "TIMES "+ System.currentTimeMillis() + " " + alarmTime);
             long timeToAlarm = alarmTime - System.currentTimeMillis();
             Intent intent = new Intent(this, ScheduleReceiver.class);
-            if (timeToAlarm <= MINUTE*11) {
+            if (timeToAlarm <= 11*MINUTE) {
                 intent.putExtra(INTENT_TYPE_KEY, WAKE_UP);
                 intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                 setAlarmManager(alarm.getId(), intent, alarmTime);
             } else {
-                if (timeToAlarm > HOUR + MINUTE*5) {
+                if (timeToAlarm > HOUR + 5*MINUTE) {
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
                     setAlarmManager(alarm.getId(), intent, alarmTime - HOUR);
                 } else {
                     intent.putExtra(INTENT_TYPE_KEY, SCHEDULED);
                     intent.putExtra(INTENT_ALARM_ID_KEY, alarm.getId());
-                    setAlarmManager(alarm.getId(), intent, alarmTime - MINUTE*10);
+                    setAlarmManager(alarm.getId(), intent, alarmTime - 10*MINUTE);
                 }
             }
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            int bedtimeMillis = prefs.getInt("sleep_time", 480)*60*1000;
+            int bedtimeMillis = prefs.getInt("sleep_time", EIGHT_HOURS_IN_MINUTES)*MINUTE_IN_MILLISECOND;
             if (timeToAlarm > bedtimeMillis){
                 intent.putExtra(INTENT_TYPE_KEY, BEDTIME_NOTIFICATION);
                 setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMillis);
@@ -155,7 +152,7 @@ public class SchedulerService extends JobIntentService {
             Log.d("==SERVICE==", "alarm scheduled " + alarm.toString());
         }
         else {
-            Log.d("==SERVICE==", "calling cancelAlarm() for Alarm: " + alarm.toString());
+            Log.d("==SERVICE==", "calling cancelAlarm() for " + alarm.toString());
             cancelAlarm(alarm.getId());
         }
     }
@@ -184,7 +181,6 @@ public class SchedulerService extends JobIntentService {
     }
 
     static class GetAlarmsTask extends AsyncTask<Void,Void,List<Alarm>>{
-
         WeakReference<SchedulerService> mScheduler;
         GetAlarmsTask(WeakReference<SchedulerService> scheduler){
             mScheduler = scheduler;
@@ -202,7 +198,6 @@ public class SchedulerService extends JobIntentService {
     }
 
     static class GetAlarms extends AsyncTask<Void,Void,List<Alarm>>{
-
         @Override
         protected List<Alarm> doInBackground(Void... voids) {
             return new AlarmFacade().getAllAlarms();
