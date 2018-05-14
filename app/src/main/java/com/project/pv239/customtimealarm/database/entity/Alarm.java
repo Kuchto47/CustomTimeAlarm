@@ -12,7 +12,6 @@ import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
 import com.project.pv239.customtimealarm.helpers.time.TimeToString;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Objects;
 
 @Entity
