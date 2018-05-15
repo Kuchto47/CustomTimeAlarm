@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.helpers.objects;
+package com.project.pv239.customtimealarm.helpers;
 
 public class Tuple<T> {
     private final T x;

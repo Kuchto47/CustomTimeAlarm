@@ -1,4 +1,4 @@
-package com.project.pv239.customtimealarm.helpers.places;
+package com.project.pv239.customtimealarm.helpers;
 
 import android.content.Context;
 import android.location.Address;
@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.App;
-import com.project.pv239.customtimealarm.helpers.PermissionChecker;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class PlacesProvider {
     public static String getOrigin() {
         try{
             return new getLocationOfDeviceTask().execute().get();
-            } catch(Exception e){
+        } catch(Exception e){
             Log.d("==EX==", "Exception occurred.");
             return "FAILURE";
         }

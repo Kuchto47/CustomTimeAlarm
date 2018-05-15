@@ -43,7 +43,7 @@ import com.project.pv239.customtimealarm.adapters.AlarmsAdapter;
 import com.project.pv239.customtimealarm.api.GoogleMapsApiInformationGetter;
 import com.project.pv239.customtimealarm.database.entity.Alarm;
 import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
-import com.project.pv239.customtimealarm.helpers.objects.Tuple;
+import com.project.pv239.customtimealarm.helpers.Tuple;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
 import java.lang.ref.WeakReference;

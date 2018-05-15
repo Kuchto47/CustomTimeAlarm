@@ -3,7 +3,6 @@ package com.project.pv239.customtimealarm.services;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.activities.WakeUpActivity;
@@ -26,8 +25,9 @@ public class ScheduleReceiver extends BroadcastReceiver{
                 Intent i = new Intent(context, WakeUpActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, intent.getIntExtra(SchedulerService.INTENT_ALARM_ID_KEY, -1));
-                context.startActivity(i);
                 WakeUpActivity.acquireLock(context);
+                context.startActivity(i);
+
             } else {
                 SchedulerService.enqueueWork(context, SchedulerService.class, SchedulerService.JOB_ID, intent);
             }

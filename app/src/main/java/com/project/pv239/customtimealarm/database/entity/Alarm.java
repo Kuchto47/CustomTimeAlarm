@@ -3,14 +3,15 @@ package com.project.pv239.customtimealarm.database.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.Nullable;
 
 import com.project.pv239.customtimealarm.enums.TrafficModel;
 import com.project.pv239.customtimealarm.enums.TravelMode;
+import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
+import com.project.pv239.customtimealarm.helpers.converters.TravelModeToString;
 import com.project.pv239.customtimealarm.helpers.time.TimeHelper;
+import com.project.pv239.customtimealarm.helpers.time.TimeToString;
 
 import java.io.Serializable;
-import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -106,7 +107,7 @@ public class Alarm implements Serializable{
     }
 
     public String getTimeOfArrival(){
-        return String.format(Locale.getDefault(),"%02d:%02d", hourOfArrival, minuteOfHourOfArrival);
+        return TimeToString.convert(hourOfArrival, minuteOfHourOfArrival);
     }
 
     public long getTimeOfArrivalInSeconds() {
@@ -130,7 +131,7 @@ public class Alarm implements Serializable{
     }
 
     public String getTimeOfDefaultAlarm(){
-        return String.format(Locale.getDefault(),"%02d:%02d", hourOfDefaultAlarm, minuteOfHourOfDefaultAlarm);
+        return TimeToString.convert(hourOfDefaultAlarm, minuteOfHourOfDefaultAlarm);
     }
 
     public long getTimeOfDefaultAlarmInSeconds() {
@@ -215,7 +216,13 @@ public class Alarm implements Serializable{
 
     @Override
     public String toString() {
-        return this.getDestination()+" "+this.getTimeOfArrival()+" " + this.getTimeOfDefaultAlarm() + " " +
-                this.getTrafficModel()+" "+this.getTravelMode()+" "+this.isOn() + " " +this.getMorningRoutine();
+        return "Alarm with ID "+this.getId()+":\n"+
+                "Destination: "+this.getDestination()+"\n"+
+                "Time of arrival: "+this.getTimeOfArrival()+"\n"+
+                "Time of default alarm: "+this.getTimeOfDefaultAlarm()+"\n"+
+                "Traffic model: "+ TrafficModelToString.get(this.getTrafficModel())+"\n"+
+                "Travel mode: "+ TravelModeToString.get(this.getTravelMode())+"\n"+
+                "Is alarm active: "+this.isOn()+"\n"+
+                "Morning routine time in seconds: "+this.getMorningRoutine()+".";
     }
 }
