@@ -25,8 +25,9 @@ public class ScheduleReceiver extends BroadcastReceiver{
                 Intent i = new Intent(context, WakeUpActivity.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, intent.getIntExtra(SchedulerService.INTENT_ALARM_ID_KEY, -1));
-                context.startActivity(i);
                 WakeUpActivity.acquireLock(context);
+                context.startActivity(i);
+
             } else {
                 SchedulerService.enqueueWork(context, SchedulerService.class, SchedulerService.JOB_ID, intent);
             }
