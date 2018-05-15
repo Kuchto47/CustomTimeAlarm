@@ -118,7 +118,7 @@ public class SchedulerService extends JobIntentService {
                     getApplicationContext(), id, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.cancel(pendingIntent);
             pendingIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), id + NOTIFICATION_ID, myIntent, 0);
+                    getApplicationContext(), id + NOTIFICATION_ID, myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             alarmManager.cancel(pendingIntent);
         }
     }
@@ -167,8 +167,10 @@ public class SchedulerService extends JobIntentService {
         }
         else {//cancel notification
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                    getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, 0);
-            ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE)).cancel(pendingIntent);
+                    getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager am = ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
+            if (am != null)
+                am.cancel(pendingIntent);
         }
     }
 
