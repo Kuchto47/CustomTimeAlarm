@@ -164,8 +164,13 @@ public class SchedulerService extends JobIntentService {
         if (timeToAlarm > bedtimeMillis){
             intent.putExtra(INTENT_TYPE_KEY, BEDTIME_NOTIFICATION);
             setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMillis);
-        }
-        else {//cancel notification
+        } else if(timeToAlarm == bedtimeMillis) {
+            setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, System.currentTimeMillis()+1000);//for sure
+        } else {//cancel notification
+            //Why not show notification if bedtime is more than time to alarm...? We can show slightly different text or so.
+            //e.g. set static variable to some value that represents that we should show notification with different text
+            //and in showing that notification we simply ask what value does out flag have and after notification is created
+            //set it to default value... what do you think?
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager am = ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
