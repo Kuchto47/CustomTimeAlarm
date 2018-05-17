@@ -7,6 +7,6 @@
     <string-array name="traffic_model">
         <item>najlepší odhad</item>
         <item>optimistický odhad</item>
-        <item>pessimistický odhad</item>
+        <item>pesimistický odhad</item>
     </string-array>
 </resources>
