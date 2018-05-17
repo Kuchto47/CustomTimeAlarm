@@ -17,8 +17,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.database.entity.Alarm;
-import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.database.Alarm;
+import com.project.pv239.customtimealarm.database.AlarmFacade;
 import com.project.pv239.customtimealarm.helpers.time.AlarmTimeGetter;
 import com.project.pv239.customtimealarm.helpers.time.TimeToString;
 

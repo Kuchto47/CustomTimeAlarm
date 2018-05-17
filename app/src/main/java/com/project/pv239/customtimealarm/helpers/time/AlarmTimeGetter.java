@@ -1,6 +1,6 @@
 package com.project.pv239.customtimealarm.helpers.time;
 
-import com.project.pv239.customtimealarm.database.entity.Alarm;
+import com.project.pv239.customtimealarm.database.Alarm;
 
 public class AlarmTimeGetter {
     public static long getAlarmTimeInMilliSeconds(Alarm alarm) {

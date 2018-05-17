@@ -22,12 +22,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.database.entity.Alarm;
-import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.database.Alarm;
+import com.project.pv239.customtimealarm.database.AlarmFacade;
 import com.project.pv239.customtimealarm.services.ScheduleReceiver;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
