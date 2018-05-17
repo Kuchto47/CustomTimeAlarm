@@ -35,12 +35,18 @@ public class WakeUpActivity extends AppCompatActivity{
 
     private static PowerManager.WakeLock sWakeLock;
     private MediaPlayer mMediaPlayer;
+    private Alarm mAlarm;
     //fragment cannot be shown over locked screen so we have to use only activity
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.wake_up_layout);
+        setWindowFlags();
+        startSound();
+        getAlarm();
+    }
 
+    private void setWindowFlags(){
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().setFormat(PixelFormat.OPAQUE);
@@ -53,8 +59,11 @@ public class WakeUpActivity extends AppCompatActivity{
         }
         else {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
+    }
+
+    private void startSound(){
         this.setVolumeControlStream(AudioManager.STREAM_ALARM);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes attributes = new AudioAttributes.Builder()
@@ -69,8 +78,9 @@ public class WakeUpActivity extends AppCompatActivity{
         }
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
-        Button up = findViewById(R.id.im_am_up);
-        Button snooze = findViewById(R.id.snooze);
+    }
+
+    private void getAlarm(){
         int alarmId = getIntent().getIntExtra(SchedulerService.INTENT_ALARM_ID_KEY, -1);
         List<Alarm> list = null;
         try {
@@ -79,51 +89,60 @@ public class WakeUpActivity extends AppCompatActivity{
             e.printStackTrace();
         }
         if (list != null)
-            for(Alarm a : list) {
+            for(Alarm a : list)
                 if (a.getId() == alarmId) {
-                    final Alarm alarm = a;
-                    up.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            alarm.setOn(false);
-                            new UpdateAlarmInDbTask(new WeakReference<>(alarm)).execute();
-                            mMediaPlayer.stop();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                finishAndRemoveTask();
-                            }else {
-                                finish();
-                            }
-                        }
-                    });
+                    mAlarm = a;
+                    setUpButton();
+                    setSnoozeButton();
+                }
+    }
 
-                    snooze.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getApplicationContext(), ScheduleReceiver.class);
-                            intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.WAKE_UP);
-                            intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, alarm.getId());
-                            PendingIntent pIntent = PendingIntent.getBroadcast(getApplicationContext(), alarm.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                            int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
-                            if (am != null) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
-                                } else {
-                                    am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
-                                }
-                            }
-                            mMediaPlayer.stop();
-                            mMediaPlayer.release();
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                                finishAndRemoveTask();
-                            }else {
-                                finish();
-                            }
-                        }
-                    });
+    private void setUpButton(){
+        Button up = findViewById(R.id.im_am_up);
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAlarm.setOn(false);
+                new UpdateAlarmInDbTask(new WeakReference<>(mAlarm)).execute();
+                mMediaPlayer.stop();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAndRemoveTask();
+                }else {
+                    finish();
                 }
             }
+        });
+
+    }
+
+    private void setSnoozeButton(){
+        Button snooze = findViewById(R.id.snooze);
+        snooze.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ScheduleReceiver.class);
+                intent.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.WAKE_UP);
+                intent.putExtra(SchedulerService.INTENT_ALARM_ID_KEY, mAlarm.getId());
+                PendingIntent pIntent = PendingIntent.getBroadcast(getApplicationContext(), mAlarm.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                int snoozeTime = Integer.parseInt(prefs.getString("snooze","5"))*60*1000;
+                if (am != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                    } else {
+                        am.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + snoozeTime, pIntent);
+                    }
+                }
+                mMediaPlayer.stop();
+                mMediaPlayer.release();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    finishAndRemoveTask();
+                }else {
+                    finish();
+                }
+            }
+        });
     }
 
     @Override
