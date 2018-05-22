@@ -13,13 +13,10 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.MapFragment;
 import com.project.pv239.customtimealarm.R;
-import com.project.pv239.customtimealarm.database.DatabaseProvider;
-import com.project.pv239.customtimealarm.database.entity.Alarm;
-import com.project.pv239.customtimealarm.database.facade.AlarmFacade;
+import com.project.pv239.customtimealarm.database.Alarm;
+import com.project.pv239.customtimealarm.database.AlarmFacade;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.services.SchedulerService;
 

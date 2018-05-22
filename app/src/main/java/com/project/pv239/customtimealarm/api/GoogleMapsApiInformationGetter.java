@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.project.pv239.customtimealarm.api.model.directions.DirectionsResponse;
 import com.project.pv239.customtimealarm.api.model.directions.Leg;
 import com.project.pv239.customtimealarm.api.model.geocoding.GeocodingResponse;
-import com.project.pv239.customtimealarm.database.entity.Alarm;
+import com.project.pv239.customtimealarm.database.Alarm;
 import com.project.pv239.customtimealarm.helpers.converters.TrafficModelToString;
 import com.project.pv239.customtimealarm.helpers.converters.TravelModeToString;
 import com.project.pv239.customtimealarm.helpers.Tuple;
