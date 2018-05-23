@@ -21,23 +21,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/text_input_wrapper"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp">
-                    <EditText
-                        android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginEnd="10dp">
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/text_input_wrapper"
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/destEdit"
-                        android:textSize="20sp"
-                        android:hint="@string/enter_dest"
-                        android:inputType="text"
-                        android:textStyle="bold"
-                        android:maxLines="1"/>
-                </android.support.design.widget.TextInputLayout>
+                        android:paddingTop="8dp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp">
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/destEdit"
+                            android:textSize="20sp"
+                            android:hint="@string/enter_dest"
+                            android:imeOptions="actionSearch"
+                            android:inputType="text"
+                            android:textStyle="bold"
+                            android:maxLines="1"/>
+                    </android.support.design.widget.TextInputLayout>
+                    <Button
+                        android:id="@+id/search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="13dp"
+                        android:text="@string/search"/>
+                </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

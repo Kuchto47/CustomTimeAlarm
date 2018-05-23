@@ -74,6 +74,12 @@ public class MainFragment extends Fragment{
         return view;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mUnbinder.unbind();
+    }
+
     public void onItemClicked(Alarm alarm) {
         SetAlarmFragment setFragment = SetAlarmFragment.newInstance(alarm,false);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
