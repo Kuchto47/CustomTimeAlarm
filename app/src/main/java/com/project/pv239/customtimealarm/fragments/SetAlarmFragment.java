@@ -75,6 +75,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     LinearLayout mLayout;
     @BindView(R.id.ok_button)
     Button mButton;
+    private ProgressDialog progress;
     private Unbinder mUnbinder;
     private boolean mCreate;
 
@@ -269,7 +270,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public boolean destinationTextChanged(TextView v, boolean closingFragment) {
         String text = v.getText().toString();
         if (!text.equals(mAlarm.getDestination()) || closingFragment) {
-            ProgressDialog progress = new ProgressDialog(getContext());
+            progress = new ProgressDialog(getContext());
             progress.setTitle(R.string.loading);
             progress.setMessage(getString(R.string.loading_text));
             progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
@@ -284,6 +285,12 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
             }
         }
         return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        progress.dismiss();
     }
 
     public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
