@@ -75,7 +75,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     LinearLayout mLayout;
     @BindView(R.id.ok_button)
     Button mButton;
-    private ProgressDialog progress;
+    private ProgressDialog mProgress;
     private Unbinder mUnbinder;
     private boolean mCreate;
 
@@ -270,14 +270,14 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public boolean destinationTextChanged(TextView v, boolean closingFragment) {
         String text = v.getText().toString();
         if (!text.equals(mAlarm.getDestination()) || closingFragment) {
-            progress = new ProgressDialog(getContext());
-            progress.setTitle(R.string.loading);
-            progress.setMessage(getString(R.string.loading_text));
-            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-            progress.show();
+            mProgress = new ProgressDialog(getContext());
+            mProgress.setTitle(R.string.loading);
+            mProgress.setMessage(getString(R.string.loading_text));
+            mProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            mProgress.show();
             LoadDestinationTask task = new LoadDestinationTask(new WeakReference<>(v), new WeakReference<>(mAlarm),
                     new WeakReference<>(mMap), closingFragment, new WeakReference<>(text),
-                    new WeakReference<>(this), mCreate, new WeakReference<>(progress));
+                    new WeakReference<>(this), mCreate, new WeakReference<>(mProgress));
             task.execute();
         } else {
             if (mAlarm.getLongitude() != 0 && mAlarm.getLatitude() != 0){
@@ -290,7 +290,8 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        progress.dismiss();
+        if (mProgress != null)
+            mProgress.dismiss();
     }
 
     public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
