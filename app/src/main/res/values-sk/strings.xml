@@ -42,4 +42,5 @@
     <string name="bedtime_notification_body_big_text">
         Choď si ľahnúť dobre sa vyspi. Ak tak urobíš teraz, budeš spať požadovaných %s1 hodín.
     </string>
+    <string name="search">Nájdi</string>
 </resources>

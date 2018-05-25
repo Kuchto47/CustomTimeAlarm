@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -72,9 +73,12 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     @BindView(R.id.morningSet)
     protected SeekBar mMorningSet;
     @BindView(R.id.set_layout)
-    LinearLayout mLayout;
+    protected LinearLayout mLayout;
     @BindView(R.id.ok_button)
-    Button mButton;
+    protected Button mSaveButton;
+    @BindView(R.id.search)
+    protected Button mSearchButton;
+    private ProgressDialog mProgress;
     private Unbinder mUnbinder;
     private boolean mCreate;
 
@@ -100,6 +104,12 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
     public void onResume() {
         super.onResume();
         this.toggleHomeButton(true);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -130,32 +140,41 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         setupTravelMode();
         setupTrafficModel();
         setupMorningRoutine();
-        mButton.setOnClickListener(new View.OnClickListener() {
+        setupButtons();
+        return view;
+    }
+
+    private void setupButtons(){
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 destinationTextChanged(mDest, true);
             }
         });
-        return view;
+        mSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                destinationTextChanged(mDest, false);
+            }
+        });
     }
 
-    public void setupMap(){
+    private void setupMap(){
         FragmentManager f = getChildFragmentManager();
         mMap = (SupportMapFragment) f.findFragmentById(R.id.map);
         mMap.getMapAsync(this);
     }
 
-    public void setupDestination(){
+    private void setupDestination(){
         mDest.setText(mAlarm.getDestination());
         mDest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (getActivity() != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (imm != null)
-                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    destinationTextChanged(v, false);
+                    return true;
                 }
-                return destinationTextChanged(v, false);
+                return false;
             }
         });
         mDest.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -167,7 +186,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void setupArrivalTime(){
+    private void setupArrivalTime(){
         mTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,7 +204,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void setupDefaultTime(){
+    private void setupDefaultTime(){
         mTimeDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,7 +222,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void setupTravelMode(){
+    private void setupTravelMode(){
         if (getActivity() == null)
             return;
         final ArrayAdapter<CharSequence> travelAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -224,7 +243,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void setupTrafficModel(){
+    private void setupTrafficModel(){
         if (getActivity() == null)
             return;
         final ArrayAdapter<CharSequence> trafficAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -245,7 +264,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public void setupMorningRoutine(){
+    private void setupMorningRoutine(){
         mMorningSet.setProgress(mAlarm.getMorningRoutine());
         mMorningSet.setMax(240);
         mMorningView.setText(String.valueOf(mAlarm.getMorningRoutine()));
@@ -266,27 +285,33 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public boolean destinationTextChanged(TextView v, boolean closingFragment) {
+    private void destinationTextChanged(TextView v, boolean closingFragment) {
         String text = v.getText().toString();
         if (!text.equals(mAlarm.getDestination()) || closingFragment) {
-            ProgressDialog progress = new ProgressDialog(getContext());
-            progress.setTitle(R.string.loading);
-            progress.setMessage(getString(R.string.loading_text));
-            progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-            progress.show();
+            mProgress = new ProgressDialog(getContext());
+            mProgress.setTitle(R.string.loading);
+            mProgress.setMessage(getString(R.string.loading_text));
+            mProgress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+            mProgress.show();
             LoadDestinationTask task = new LoadDestinationTask(new WeakReference<>(v), new WeakReference<>(mAlarm),
                     new WeakReference<>(mMap), closingFragment, new WeakReference<>(text),
-                    new WeakReference<>(this), mCreate, new WeakReference<>(progress));
+                    new WeakReference<>(this), mCreate, new WeakReference<>(mProgress));
             task.execute();
-        } else {
-            if (mAlarm.getLongitude() != 0 && mAlarm.getLatitude() != 0){
-                v.setText(mAlarm.getDestination());
-            }
+            mDest.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
-        return true;
     }
 
-    public static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mProgress != null)
+            mProgress.dismiss();
+    }
+
+    private static class LoadDestinationTask extends AsyncTask<Void,Void,Void>{
 
         private WeakReference<TextView> mTextView;
         private WeakReference<String> mText;
@@ -409,7 +434,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(pos));
     }
 
-    public static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
+    private static class UpdateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
 
@@ -429,7 +454,7 @@ public class SetAlarmFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
+    private static class CreateAlarmInDbTask extends AsyncTask<Void, Void, Void> {
 
         private WeakReference<Alarm> mAlarm;
 

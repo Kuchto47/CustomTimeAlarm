@@ -41,4 +41,5 @@
     <string name="bedtime_notification_body_big_text">
         Go to bed and sleep well. If you do it now, you will meet required %s1 hours to sleep.
     </string>
+    <string name="search">Search</string>
 </resources>
