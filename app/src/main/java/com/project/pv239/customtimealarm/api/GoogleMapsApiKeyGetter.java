@@ -9,9 +9,9 @@ import android.util.Log;
 import com.project.pv239.customtimealarm.App;
 
 public class GoogleMapsApiKeyGetter {
-    private static String EMPTY_STRING = "";
-    private static String gMapsKeyIdentifier = "com.google.android.geo.API_KEY";
-    private static String gMapsLatLonKeyIdentifier = "lat.lon.API_KEY";
+    private static final String EMPTY_STRING = "";
+    private static final String gMapsKeyIdentifier = "com.google.android.geo.API_KEY";
+    private static final String gMapsLatLonKeyIdentifier = "lat.lon.API_KEY";
 
     public static String getApiKey() {
         return GoogleMapsApiKeyGetter.getApiKey(App.getInstance(), gMapsKeyIdentifier);

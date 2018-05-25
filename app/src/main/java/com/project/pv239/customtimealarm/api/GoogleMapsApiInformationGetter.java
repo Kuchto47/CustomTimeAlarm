@@ -2,6 +2,7 @@ package com.project.pv239.customtimealarm.api;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.project.pv239.customtimealarm.api.model.directions.DirectionsResponse;
 import com.project.pv239.customtimealarm.api.model.directions.Leg;
@@ -44,15 +45,19 @@ public class GoogleMapsApiInformationGetter {
                 place,
                 GoogleMapsApiKeyGetter.getLatLonApiKey()
         );
+        Tuple<Double> result = null;
         try{
             Response<GeocodingResponse> gResponse = responseCall.execute();
             GeocodingResponse responseBody = gResponse.body();
-            Double lat = responseBody.results[0].geometry.location.lat;
-            Double lng = responseBody.results[0].geometry.location.lng;
-            return new Tuple<>(lat, lng);
+            if(responseBody != null){
+                Double lat = responseBody.results[0].geometry.location.lat;
+                Double lng = responseBody.results[0].geometry.location.lng;
+                result = new Tuple<>(lat, lng);
+            } else { Log.d("==LAT|LON==", "No response from server..."); }
         } catch (Exception e) {
-            return null;
+            Log.d("==LAT|LON==", "Couldn't get latitude and longitude of place. Reason: " + e.getMessage());
         }
+        return result;
     }
 
     private static class GetTimeTask extends AsyncTask<Void, Void, Leg> {
@@ -64,13 +69,17 @@ public class GoogleMapsApiInformationGetter {
 
         @Override
         protected Leg doInBackground(Void... voids) {
+            Leg result = null;
             try{
                 Response<DirectionsResponse> gResponse = responseCall.execute();
                 DirectionsResponse responseBody = gResponse.body();
-                return responseBody.routes[0].legs[0];
+                if(responseBody != null){
+                    result = responseBody.routes[0].legs[0];
+                } else { Log.d("==GetTime==", "No response from server..."); }
             } catch (Exception e) {
-                return null;
+                Log.d("==GetTime==", "Couldn't get travel time. Reason: " + e.getMessage());
             }
+            return result;
         }
     }
 }
