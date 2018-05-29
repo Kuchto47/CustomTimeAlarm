@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class WakeUpActivity extends AppCompatActivity{
-
     private static PowerManager.WakeLock sWakeLock;
     private MediaPlayer mMediaPlayer;
     private Alarm mAlarm;
+
     //fragment cannot be shown over locked screen so we have to use only activity
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
