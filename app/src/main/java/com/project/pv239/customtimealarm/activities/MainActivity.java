@@ -3,14 +3,11 @@ package com.project.pv239.customtimealarm.activities;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,7 +15,6 @@ import com.project.pv239.customtimealarm.R;
 import com.project.pv239.customtimealarm.fragments.MainFragment;
 import com.project.pv239.customtimealarm.fragments.SetAlarmFragment;
 import com.project.pv239.customtimealarm.helpers.PermissionChecker;
-import com.project.pv239.customtimealarm.services.SchedulerService;
 
 public class MainActivity extends AppCompatActivity {
     @Override
