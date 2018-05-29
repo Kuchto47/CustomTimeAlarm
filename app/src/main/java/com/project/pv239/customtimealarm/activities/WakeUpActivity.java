@@ -1,7 +1,7 @@
 package com.project.pv239.customtimealarm.activities;
 
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -51,16 +51,24 @@ public class WakeUpActivity extends AppCompatActivity{
                 WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().setFormat(PixelFormat.OPAQUE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            setShowWhenLocked(true);
-            setTurnScreenOn(true);
-            KeyguardManager m = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
-            if (m != null)
-                m.requestDismissKeyguard(this, null);
+            setWindowFlagsOreoAndHigher();
+        } else {
+            setWindowFlagsBelowOreo();
         }
-        else {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        }
+    }
+
+    @TargetApi(27)
+    private void setWindowFlagsOreoAndHigher() {
+        setShowWhenLocked(true);
+        setTurnScreenOn(true);
+        /*KeyguardManager m = (KeyguardManager) getApplicationContext().getSystemService(Context.KEYGUARD_SERVICE);
+        if (m != null)
+            m.requestDismissKeyguard(this, null);*/
+    }
+
+    private void setWindowFlagsBelowOreo() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
     private void startSound(){
