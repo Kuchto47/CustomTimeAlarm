@@ -26,17 +26,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         loadFragment(savedInstanceState);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        prefs.registerOnSharedPreferenceChangeListener(
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    Log.d("==SERVICE==", "changed preferences");
-                    Intent i = new Intent();
-                    i.putExtra(SchedulerService.INTENT_TYPE_KEY, SchedulerService.SCHEDULE_ALL);
-                    SchedulerService.enqueueWork(getApplicationContext(), SchedulerService.class, SchedulerService.JOB_ID, i);
-                }
-        });
         PermissionChecker.getLocationPermissionIfNotGranted(this);
     }
 
