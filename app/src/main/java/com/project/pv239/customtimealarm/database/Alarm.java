@@ -179,14 +179,14 @@ public class Alarm implements Serializable{
     }
 
     /**
-     * @return number of seconds for morning routine
+     * @return number of minutes for morning routine
      */
     public int getMorningRoutine() {
         return morningRoutine;
     }
 
     /**
-     * @param morningRoutine number of seconds for morning routine
+     * @param morningRoutine number of minutes for morning routine
      */
     public void setMorningRoutine(int morningRoutine) {
         this.morningRoutine = morningRoutine;
@@ -223,6 +223,6 @@ public class Alarm implements Serializable{
                 "Traffic model: "+ TrafficModelToString.get(this.getTrafficModel())+"\n"+
                 "Travel mode: "+ TravelModeToString.get(this.getTravelMode())+"\n"+
                 "Is alarm active: "+this.isOn()+"\n"+
-                "Morning routine time in seconds: "+this.getMorningRoutine()+".";
+                "Morning routine time in minutes: "+this.getMorningRoutine()+".";
     }
 }
