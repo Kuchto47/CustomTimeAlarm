@@ -44,6 +44,7 @@ public class SchedulerService extends JobIntentService {
     private static final int MINUTE_IN_MILLISECONDS = 60*1000;
 
 
+
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.d("==SERVICE==","work" + intent.getIntExtra(INTENT_TYPE_KEY, -1));
@@ -81,7 +82,7 @@ public class SchedulerService extends JobIntentService {
     }
 
     private void createBedTimeNotification() {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean shouldShowNotification = pref.getBoolean("bedtime", false);
         if(shouldShowNotification){
             NotificationCompat.Builder mBuilder = initializeBedTimeNotification(pref);
@@ -159,13 +160,17 @@ public class SchedulerService extends JobIntentService {
     }
 
     private void handleNotificationEmit(long timeToAlarm, long alarmTime, Intent intent, Alarm alarm) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.d("==NOTIF==", "handling for " + alarm.toString());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int bedtimeMillis = prefs.getInt("sleep_time", EIGHT_HOURS_IN_MINUTES)*MINUTE_IN_MILLISECONDS;
+        Log.d("==NOTIF==", "bedtimeMillis: "+bedtimeMillis);
         if (timeToAlarm > bedtimeMillis){
+            Log.d("==NOTIF==", "inside if");
             intent.putExtra(INTENT_TYPE_KEY, BEDTIME_NOTIFICATION);
             setAlarmManager(alarm.getId() + NOTIFICATION_ID, intent, alarmTime - bedtimeMillis);
         }
         else {//cancel notification
+            Log.d("==NOTIF==", "inside else");
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
                     getApplicationContext(), alarm.getId()+NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager am = ((AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
